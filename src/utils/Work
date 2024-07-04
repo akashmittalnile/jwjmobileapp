@@ -1,0 +1,14 @@
+01/07/2024
+* Make improvement mentioned by client, remove image mandatory from add/edit journal.
+* Fix the bugs of ios.
+* Setup the environment for ios push notification.
+* Upload ios build.
+
+02/07/2024
+* Fix bugs of ios.
+* setup the ios push notification.
+
+03/07/2024 (half day)
+* Bug fix.
+* Add new tester on apple account.
+* Publish build to testflight.

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1010083815791",
+    "project_id": "chatapp-29659",
+    "storage_bucket": "chatapp-29659.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010083815791:android:e3f8bde8f557ed87a3889a",
+        "android_client_info": {
+          "package_name": "com.journeywithjournalsl"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBePpsFC2hgwSljCL4O-UVgL2gvPPbUuXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,45 @@
+# Define Firebase SDK Version
+$FirebaseSDKVersion = '10.24.0'
+
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
+
+# Platform and React Native Configuration
+platform :ios, '13.4' # Adjust the iOS version as needed
+
+target 'JourneywithJournalsl' do
+  # React Native Configuration
+pod 'Firebase/Messaging', '10.24.0'
+  config = use_native_modules!
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  # Firebase Configuration
+  pod 'Firebase/Core', $FirebaseSDKVersion
+  # Add other Firebase pods as needed
+  pod 'RNIap', :path => '../node_modules/react-native-iap'
+
+  post_install do |installer|
+
+    # plist['NSAppTransportSecurity']['NSAllowsArbitraryLoads'] = true
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      end
+    end
+    # React Native post-install
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false
+    )
+  end
+end

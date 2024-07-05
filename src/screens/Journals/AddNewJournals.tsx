@@ -328,11 +328,7 @@ const AddNewJournals = () => {
               <View
                 style={{
                   marginTop: responsiveHeight(2),
-                  borderWidth: responsiveWidth(0.2),
                   borderRadius: responsiveWidth(2),
-                  borderColor: err.content
-                    ? 'red'
-                    : globalStyles.borderColorBlue,
                 }}>
                 <FormatInput
                   value={content}
@@ -355,6 +351,12 @@ const AddNewJournals = () => {
                   micButtonIcon={micButtonIconPath}
                   _micButtonIcon={_micButtonIconPath}
                   editable={!loader}
+                  style={{
+                    borderWidth: responsiveWidth(0.2),
+                    borderColor: err.content
+                    ? 'red'
+                    : globalStyles.borderColorBlue,
+                  }}
                 />
               </View>
 

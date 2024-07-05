@@ -25,6 +25,7 @@ import FastImage from 'react-native-fast-image';
 import IconButton from '../Button/IconButton';
 import editIcon from '../../assets/Icons/edit.png';
 import trashIcon from '../../assets/Icons/trash.png';
+import downloadIcon from '../../assets/Icons/download.png'
 import {DeleteApi, endPoint} from '../../services/Service';
 import {useAppDispatch, useAppSelector} from '../../redux/Store';
 import Toast from 'react-native-toast-message';
@@ -137,6 +138,11 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
                 styles.headerButtonContainer,
                 headerButtonContainerStyle,
               ]}>
+                <IconButton
+                  iconUri={Image.resolveAssetSource(downloadIcon).uri}
+                  onPress={editHandler}
+                  style={{...styles.touch, width: responsiveWidth(10)}}
+                />
               {isEditable && (
                 <IconButton
                   iconUri={editIconPath}
@@ -250,14 +256,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
     height: responsiveHeight(4),
-    flex: 0.7,
+    // flex: 1,
   },
   touch: {
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: responsiveWidth(1),
+    paddingHorizontal: responsiveWidth(2),
     height: '90%',
-    width: '40%',
     backgroundColor: globalStyles.themeBlue,
     borderRadius: responsiveWidth(2),
     elevation: 3,

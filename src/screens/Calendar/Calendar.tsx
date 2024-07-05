@@ -32,6 +32,7 @@ interface CategoryTabProps {
   onPress?: () => void;
   sliderImages?: string[];
   date: string;
+  routineType?: string;
 }
 
 const CategoryTab: React.FC<CategoryTabProps> = ({
@@ -44,6 +45,7 @@ const CategoryTab: React.FC<CategoryTabProps> = ({
   onPress,
   sliderImages,
   date,
+  routineType,
 }) => {
   const temp = imageUri?.split('.');
   let imageType;
@@ -56,6 +58,7 @@ const CategoryTab: React.FC<CategoryTabProps> = ({
       onPress();
     }
   };
+
   return (
     <Wrapper containerStyle={styles.wrapper}>
       <TouchableOpacity
@@ -107,8 +110,28 @@ const CategoryTab: React.FC<CategoryTabProps> = ({
               />
             </View>
           )}
-          <Text style={styles.categoryTabHeaderText}>{type}</Text>
-          <Text style={{flex: 1, textAlign: 'right', color: 'gray', fontSize: responsiveFontSize(1.6), fontWeight: '500'}}>
+          <View>
+            <Text style={styles.categoryTabHeaderText}>{type}</Text>
+            {!categoryName && (
+              <Text
+                style={{
+                  ...styles.categoryTabHeaderText,
+                  color: globalStyles.themeBlue,
+                  fontSize: responsiveFontSize(1.6),
+                  fontWeight: '600',
+                }}>
+                {routineType}
+              </Text>
+            )}
+          </View>
+          <Text
+            style={{
+              flex: 1,
+              textAlign: 'right',
+              color: 'gray',
+              fontSize: responsiveFontSize(1.6),
+              fontWeight: '500',
+            }}>
             {date}
           </Text>
         </View>
@@ -265,6 +288,11 @@ const Calendar = () => {
                   goToRoutineDetails(item?.routineid);
                 }}
                 date={item?.created_at}
+                routineType={
+                  item?.createdBy === 'mySelf'
+                    ? 'Private Routine'
+                    : 'Shared Routine'
+                }
               />
             ))}
           </>

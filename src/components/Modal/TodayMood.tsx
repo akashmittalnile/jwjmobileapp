@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from 'react-native';
 import React from 'react';
 import Wrapper from '../Wrapper/Wrapper';
 import {
@@ -37,21 +44,29 @@ const TodayMood: React.FC<TodayMoodProps> = ({onPress, disableModal}) => {
         </TouchableOpacity>
         <Text style={styles.heading}>How Are You Feeling Today?</Text>
         <View style={styles.buttonsContainer}>
-          {moodData?.map(item => (
-            <TouchableOpacity
-              key={item?.id.toString()}
-              style={styles.touch}
-              onPress={() => {
-                moodHandler(item?.id);
-              }}>
-              <FastImage
-                source={{uri: item?.logo, priority: FastImage.priority.high}}
-                resizeMode={FastImage.resizeMode.contain}
-                style={styles.img}
-              />
-              <Text style={styles.text}>{item?.name}</Text>
-            </TouchableOpacity>
-          ))}
+          <ScrollView
+            style={{height: '100%'}}
+            contentContainerStyle={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+            }}
+            bounces={false}>
+            {moodData?.map((item, index) => (
+              <TouchableOpacity
+                key={item?.id.toString() + index}
+                style={styles.touch}
+                onPress={() => {
+                  moodHandler(item?.id);
+                }}>
+                <FastImage
+                  source={{uri: item?.logo, priority: FastImage.priority.high}}
+                  resizeMode={FastImage.resizeMode.contain}
+                  style={styles.img}
+                />
+                <Text style={styles.text}>{item?.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
       </Wrapper>
     </View>
@@ -93,7 +108,7 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.8),
     fontWeight: '600',
     opacity: 0.8,
-    color: 'black'
+    color: 'black',
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -102,6 +117,7 @@ const styles = StyleSheet.create({
     marginTop: responsiveHeight(1),
     width: '100%',
     paddingHorizontal: responsiveWidth(15),
+    maxHeight: responsiveHeight(40),
   },
   touch: {
     alignItems: 'center',

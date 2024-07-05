@@ -29,6 +29,7 @@ interface FormatInputProps {
   onChangeText?: (text: string) => void;
   value?: string;
   editable?: boolean;
+  style;
 }
 
 const initialValue = {
@@ -57,6 +58,7 @@ const FormatInput: React.FC<FormatInputProps> = ({
   onChangeText,
   value,
   editable = true,
+  style,
 }) => {
   const [fontStyle, setFontStyle] = React.useState<{
     bold: boolean;
@@ -102,7 +104,7 @@ const FormatInput: React.FC<FormatInputProps> = ({
   };
 
   return (
-    <Wrapper containerStyle={styles.wrapper}>
+    <Wrapper containerStyle={{...styles.wrapper, ...style}}>
       {/* <View style={styles.header}>
         <View
           style={{

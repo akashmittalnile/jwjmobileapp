@@ -167,7 +167,6 @@ const MyCommunity = () => {
   };
 
   const showDeleteModal = (id: number) => {
-    console.log('clecked');
     setShowDeleteModal(preData => ({...preData, showModal: true, id}));
   };
 
@@ -179,6 +178,10 @@ const MyCommunity = () => {
         token,
       );
       if (response?.data?.status) {
+        Toast.show({
+          type: 'success',
+          text1: response?.data?.message,
+        });
         dispatch(
           reloadHandler({[ScreenNames.MyCommunity]: !reload.MyCommunity}),
         );
@@ -362,17 +365,6 @@ const MyCommunity = () => {
             </Text>
             <View style={styles.modalButtonContainer}>
               <BorderBtn
-                loader={showDeletedModal.loader}
-                loaderColor="red"
-                buttonText="Delete"
-                onClick={deleteCommunity}
-                containerStyle={{
-                  ...styles.modalButtonStyle,
-                  borderColor: 'red',
-                }}
-                buttonTextStyle={{color: 'red'}}
-              />
-              <BorderBtn
                 buttonText="Cancel"
                 onClick={() => {
                   setShowDeleteModal(preData => ({
@@ -385,6 +377,18 @@ const MyCommunity = () => {
                   borderColor: globalStyles.themeBlue,
                 }}
                 buttonTextStyle={{color: globalStyles.themeBlue}}
+              />
+              <BorderBtn
+                buttonText="Yes"
+                loader={showDeletedModal.loader}
+                loaderColor="white"
+                onClick={deleteCommunity}
+                containerStyle={{
+                  ...styles.modalButtonStyle,
+                  backgroundColor: 'red',
+                  borderColor: 'red',
+                }}
+                buttonTextStyle={{color: 'white'}}
               />
             </View>
           </Wrapper>

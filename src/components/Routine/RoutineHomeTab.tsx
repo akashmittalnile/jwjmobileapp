@@ -84,10 +84,10 @@ const RoutineHomeTab: React.FC<RoutineHomeTabProps> = ({data}) => {
       <TouchableOpacity
         activeOpacity={0.5}
         onPress={goToRoutineDetailsScreenHandler}>
-        <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop: responsiveHeight(1)}}>
+        {/* <View style={{flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop: responsiveHeight(1)}}>
           <Text style={{marginLeft: responsiveWidth(3),color: 'black'}}>Status: </Text>
           {statusHandler(data?.status?.toLowerCase())}
-        </View>
+        </View> */}
         <View style={styles.touch}>
           <View style={{flex: 1}}>
             <SvgUri

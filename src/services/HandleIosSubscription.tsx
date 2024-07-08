@@ -6,6 +6,7 @@ import RNIap, {
   initConnection,
   endConnection,
   getSubscriptions,
+  getProducts,
 } from 'react-native-iap';
 
 let purchaseUpdateSubscription: any = null;
@@ -21,6 +22,9 @@ export const subscribedToSubscriptionListener = async (callback: Function) => {
       'prod_PVqNani9ws1r6k_plan_b_monthly',
       'prod_PVqNHEOuvDDSKy_plan_c_monthly',
     ],
+  });
+  await getProducts({
+    skus: ['journeywithjournaltest'],
   });
   purchaseUpdateSubscription = purchaseUpdatedListener(async purchase => {
     const receipt = purchase.transactionReceipt;
@@ -61,6 +65,6 @@ export const handleSubscription = async (
     callback && callback(response);
   } catch (err) {
     console.log('error in requestSubscription', err);
-    callback && callback(Error)
+    callback && callback(Error);
   }
 };

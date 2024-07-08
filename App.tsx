@@ -67,7 +67,7 @@ function App(): React.ReactElement {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <StripeProvider
-        publishableKey="pk_test_..."
+        publishableKey="pk_test_51OgoamGdqn1JkKNJkKB19GFHa1Tsp6vjfpPNSViGDwDYOsPPbqk6HSqp4z542P55IlQLCReRQr96ibkc2OCXwiAd00FqBen60M"
         merchantIdentifier="merchant.identifier"
         urlScheme="your-url-scheme">
         <NavigationContainer>

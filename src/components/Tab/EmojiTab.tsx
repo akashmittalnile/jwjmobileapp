@@ -10,7 +10,10 @@ import {
   Image,
   ImageStyle,
   Modal,
+  PermissionsAndroid,
   Alert,
+  Linking,
+  Platform,
 } from 'react-native';
 import React from 'react';
 import Wrapper from '../Wrapper/Wrapper';
@@ -25,15 +28,17 @@ import FastImage from 'react-native-fast-image';
 import IconButton from '../Button/IconButton';
 import editIcon from '../../assets/Icons/edit.png';
 import trashIcon from '../../assets/Icons/trash.png';
-import downloadIcon from '../../assets/Icons/download.png'
+import downloadIcon from '../../assets/Icons/download.png';
 import {DeleteApi, endPoint} from '../../services/Service';
 import {useAppDispatch, useAppSelector} from '../../redux/Store';
 import Toast from 'react-native-toast-message';
 import {reloadHandler} from '../../redux/ReloadScreen';
 import ScreenNames from '../../utils/ScreenNames';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import DeleteModal from '../Modal/DeleteModal';
 import moment from 'moment';
+import RNFetchBlob from 'rn-fetch-blob';
+import {bool, boolean} from 'yup';
 
 interface EmojiTabProps {
   data?: any;
@@ -54,6 +59,7 @@ interface EmojiTabProps {
   heading?: string;
   isEditable?: boolean;
   isDeletable?: boolean;
+  pdfLink?: string;
 }
 
 const EmojiTab: React.FC<EmojiTabProps> = ({
@@ -75,6 +81,7 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
   heading = '',
   isEditable = true,
   isDeletable = true,
+  pdfLink = '',
 }) => {
   const dispatch = useAppDispatch();
   const token = useAppSelector(state => state.auth.token);
@@ -84,7 +91,7 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
   const [loader, setLoader] = React.useState<{delete: boolean}>({
     delete: false,
   });
-
+  const [pdfLoader, setPdfLoader] = React.useState<boolean>(false);
   const defaultImagePath = Image.resolveAssetSource(defaultImage).uri;
   const editIconPath = Image.resolveAssetSource(editIcon).uri;
   const deleteIconPath = Image.resolveAssetSource(trashIcon).uri;
@@ -125,6 +132,103 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
       setModalVisible(false);
     }
   };
+
+  const fetchPdf = async () => {
+    try {
+      if (!pdfLink) {
+        console.log('PDF link is missing.');
+        return;
+      }
+
+      const {config, fs} = RNFetchBlob;
+      const downloadDir = fs.dirs.DownloadDir;
+      const fileName = pdfLink.substring(pdfLink.lastIndexOf('/') + 1);
+      const path = `${downloadDir}/${fileName}`;
+
+      const options = {
+        fileCache: true,
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          path,
+          description: 'Downloading PDF',
+        },
+      };
+
+      const response: any = await config(options).fetch('GET', pdfLink);
+      console.log(response);
+      if (response.info().status === 200) {
+        Toast.show({
+          type: 'success',
+          text1: 'Pdf Downloaded Successfully',
+        });
+      }
+    } catch (err: any) {
+      console.log('Error fetching PDF:', err?.message);
+    } finally {
+      setPdfLoader(false);
+    }
+  };
+  const permissionHandler = async () => {
+    try {
+      const hasPermission = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      );
+      if (hasPermission) {
+        fetchPdf();
+        return;
+      }
+  
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Storage Permission Needed',
+          message: 'This app needs access to your storage to download PDFs.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+  
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        fetchPdf();
+      } else if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+        Alert.alert(
+          'Permission Denied',
+          'You need to enable storage permission from the settings',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+        );
+      } else {
+        Alert.alert(
+          'Permission Denied!',
+          'You need to give storage permission to download the file',
+        );
+      }
+    } catch (err:any) {
+      console.log('Error requesting permission:', err.message);
+    } finally {
+      setPdfLoader(false);
+    }
+  };
+  
+
+  const downloadPdf = async () => {
+    setPdfLoader(true);
+    try {
+      if (Platform.OS === 'android') {
+        await permissionHandler();
+      } else if (Platform.OS === 'ios') {
+        fetchPdf();
+      }
+    } catch (err: any) {
+      console.log('Error downloading PDF:', err?.message);
+      setPdfLoader(false);
+    }
+  };
+
   return (
     <View>
       <Wrapper containerStyle={styles.Wrapper}>
@@ -138,11 +242,13 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
                 styles.headerButtonContainer,
                 headerButtonContainerStyle,
               ]}>
-                <IconButton
-                  iconUri={Image.resolveAssetSource(downloadIcon).uri}
-                  onPress={editHandler}
-                  style={{...styles.touch, width: responsiveWidth(10)}}
-                />
+              <IconButton
+                loader={pdfLoader}
+                disable={pdfLoader}
+                iconUri={Image.resolveAssetSource(downloadIcon).uri}
+                onPress={downloadPdf}
+                style={{...styles.touch, width: responsiveWidth(10)}}
+              />
               {isEditable && (
                 <IconButton
                   iconUri={editIconPath}

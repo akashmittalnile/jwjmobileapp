@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import React from 'react';
 import Wrapper from '../Wrapper/Wrapper';
@@ -18,11 +20,16 @@ import {useAppSelector} from '../../redux/Store';
 import FastImage from 'react-native-fast-image';
 
 interface TodayMoodProps {
+  loader?: boolean;
   onPress: (mood: string) => void;
   disableModal: () => void;
 }
 
-const TodayMood: React.FC<TodayMoodProps> = ({onPress, disableModal}) => {
+const TodayMood: React.FC<TodayMoodProps> = ({
+  onPress,
+  disableModal,
+  loader = false,
+}) => {
   const moodData = useAppSelector(state => state.mood);
   const moodHandler = (id: string) => {
     onPress(id);
@@ -30,43 +37,50 @@ const TodayMood: React.FC<TodayMoodProps> = ({onPress, disableModal}) => {
   const disableModalHandler = () => {
     disableModal && disableModal();
   };
+
+  const renderMood = ({item, index}: {item: any; index: number}) => {
+    return (
+      <TouchableOpacity
+        disabled={loader}
+        key={item?.id.toString() + index}
+        style={styles.touch}
+        onPress={() => {
+          moodHandler(item?.id);
+        }}>
+        <FastImage
+          source={{uri: item?.logo, priority: FastImage.priority.high}}
+          resizeMode={FastImage.resizeMode.contain}
+          style={styles.img}
+        />
+
+        <Text style={styles.text}>{item?.name}</Text>
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.container}>
       <Wrapper containerStyle={styles.wrapper}>
         <TouchableOpacity
           style={styles.crossTouch}
-          onPress={disableModalHandler}>
-          <Image
-            source={require('../../assets/Icons/cancel.png')}
-            style={styles.icon}
-            resizeMode="contain"
-          />
+          onPress={disableModalHandler}
+          disabled={loader}>
+          {!loader && (
+            <Image
+              source={require('../../assets/Icons/cancel.png')}
+              style={styles.icon}
+              resizeMode="contain"
+            />
+          )}
+          {loader && <ActivityIndicator color={globalStyles.themeBlue} />}
         </TouchableOpacity>
         <Text style={styles.heading}>How Are You Feeling Today?</Text>
         <View style={styles.buttonsContainer}>
-          <ScrollView
-            style={{height: '100%'}}
-            contentContainerStyle={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-            }}
-            bounces={false}>
-            {moodData?.map((item, index) => (
-              <TouchableOpacity
-                key={item?.id.toString() + index}
-                style={styles.touch}
-                onPress={() => {
-                  moodHandler(item?.id);
-                }}>
-                <FastImage
-                  source={{uri: item?.logo, priority: FastImage.priority.high}}
-                  resizeMode={FastImage.resizeMode.contain}
-                  style={styles.img}
-                />
-                <Text style={styles.text}>{item?.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
+          <FlatList
+            data={moodData}
+            renderItem={renderMood}
+            numColumns={Math.ceil((moodData?.length * 0 + 4) / 1)}
+            bounces={false}
+          />
         </View>
       </Wrapper>
     </View>
@@ -111,25 +125,23 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
     marginTop: responsiveHeight(1),
     width: '100%',
-    paddingHorizontal: responsiveWidth(15),
     maxHeight: responsiveHeight(40),
   },
   touch: {
+    flex: 1,
+    margin: 5,
     alignItems: 'center',
-    width: '50%',
   },
   img: {
-    height: responsiveHeight(10),
-    width: responsiveHeight(10),
+    height: responsiveHeight(5),
+    width: responsiveHeight(5),
   },
   text: {
-    fontSize: responsiveFontSize(1.8),
+    fontSize: responsiveFontSize(1.4),
     fontWeight: '600',
     color: globalStyles.themeBlue,
+    textAlign: 'center',
   },
 });

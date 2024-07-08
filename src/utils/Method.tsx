@@ -4,7 +4,6 @@ import {authHandler} from '../redux/Auth';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
 
-
 export const isValidDateHandler = (dateString: string) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
     return false;
@@ -142,5 +141,15 @@ export const triggerNotification = async (
     }
   } catch (err: any) {
     console.log('Error in notification handling:', err.message);
+  }
+};
+
+export const findTenure = (timePeriod: string) => {
+  if (timePeriod?.toLowerCase() === 'monthly') {
+    return '/Month';
+  } else if (timePeriod?.toLowerCase() === 'yearly') {
+    return '/Year';
+  } else {
+    return ' One-Time';
   }
 };

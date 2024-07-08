@@ -38,7 +38,7 @@ import {authHandler} from '../../redux/Auth';
 import Toast from 'react-native-toast-message';
 import {followedCommunityHandler} from '../../redux/TrackNumbers';
 import FastImage from 'react-native-fast-image';
-import {USMobileNumberFormatHandler} from '../../utils/Method';
+import {findTenure, USMobileNumberFormatHandler} from '../../utils/Method';
 import MonthYearCalendar from '../../components/Calendar/MonthYearCalendar';
 
 const Profile = () => {
@@ -59,6 +59,9 @@ const Profile = () => {
     number | undefined
   >();
   const [moodData, setMoodData] = React.useState<any[]>([]);
+  const [profileData, setprofileData] = React.useState<any | undefined>(
+    undefined,
+  );
   const [showModal, setShowModal] = React.useState<boolean>(false);
   const [showDateModal, setShowDateModal] = React.useState<boolean>(false);
   const [moodDate, setMoodDate] = React.useState<string>(
@@ -76,8 +79,20 @@ const Profile = () => {
 
   const getInitialData = (_date: string) => {
     getMoodData(_date);
+    getProfileData();
     getFollowedCommunityCount();
     getSharedroutineCount();
+  };
+
+  const getProfileData = async () => {
+    try {
+      const resp = await GetApiWithToken(endPoint.profile, token);
+      if (resp?.data?.status) {
+        setprofileData(resp?.data?.data?.today_mood);
+      }
+    } catch (err: any) {
+      console.log('err in profile data', err?.message);
+    }
   };
 
   const getFollowedCommunityCount = async () => {
@@ -270,6 +285,35 @@ const Profile = () => {
                 }}
               />
             </View>
+            <View style={styles.todayMoodContainer}>
+              <Text
+                style={{
+                  ...styles.userName,
+                  color: globalStyles.themeBlue,
+                  marginBottom: responsiveHeight(1),
+                }}>
+                Today's Mood
+              </Text>
+              {profileData?.logo && (
+                <FastImage
+                  source={{uri: profileData?.logo}}
+                  resizeMode={FastImage?.resizeMode?.contain}
+                  style={{
+                    height: responsiveHeight(4),
+                    width: responsiveHeight(4),
+                  }}
+                />
+              )}
+              {profileData?.name && (
+                <Text
+                  style={{
+                    fontSize: responsiveFontSize(1.5),
+                    fontWeight: '400',
+                  }}>
+                  {profileData?.name}
+                </Text>
+              )}
+            </View>
           </Wrapper>
 
           {/* plan details */}
@@ -301,11 +345,7 @@ const Profile = () => {
                     ? 'FREE'
                     : '$' +
                       userDetails?.currentPlan?.price +
-                      '/' +
-                      (userDetails?.currentPlan?.plan_timeperiod?.toLowerCase() ===
-                      'monthly'
-                        ? 'Month'
-                        : 'Year')}
+                      findTenure(userDetails?.currentPlan?.plan_timeperiod)}
                 </Text>
               </View>
               <View style={{flex: 1.5}}>
@@ -377,7 +417,7 @@ const Profile = () => {
             <View>
               {showDateModal && (
                 <MonthYearCalendar
-                value={moodDate}
+                  value={moodDate}
                   onSelectMonth={moodDateFilterHandler}
                   onCancel={() => {
                     setShowDateModal(false);
@@ -486,10 +526,27 @@ const styles = StyleSheet.create({
     width: responsiveWidth(95),
   },
   wrapper: {
+    position: 'relative',
     marginTop: responsiveHeight(2),
     paddingBottom: responsiveHeight(2),
     width: '100%',
     borderRadius: responsiveWidth(2),
+  },
+  todayMoodContainer: {
+    position: 'absolute',
+    top: responsiveHeight(1),
+    right: responsiveWidth(2),
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 7,
+    borderWidth: responsiveWidth(0.23),
+    borderRadius: responsiveWidth(2),
+    borderColor: 'rgba(0,0,0,0.2)',
+    shadowColor: 'rgba(137, 137, 137, .25)',
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    backgroundColor: 'white',
   },
   profile: {
     height: responsiveHeight(10),

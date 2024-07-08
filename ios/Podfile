@@ -27,6 +27,9 @@ pod 'Firebase/Messaging', '10.24.0'
   # Add other Firebase pods as needed
   pod 'RNIap', :path => '../node_modules/react-native-iap'
 
+  pod 'rn-fetch-blob',
+    :path => '../node_modules/rn-fetch-blob'
+
   post_install do |installer|
 
     # plist['NSAppTransportSecurity']['NSAllowsArbitraryLoads'] = true

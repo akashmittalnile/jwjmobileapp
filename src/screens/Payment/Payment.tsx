@@ -69,6 +69,7 @@ const Payment = (props: any) => {
   const [submitLoader, setSubmitLoader] = React.useState<boolean>(false);
 
   useEffect(() => {
+    console.log(params);
     getCardList();
   }, []);
 
@@ -105,10 +106,16 @@ const Payment = (props: any) => {
         setLoading(preData => ({...preData, cardLoader: true}));
         setSubmitLoader(true);
         const res: any = await createToken({card, type: 'Card'});
+        console.log(res)
         let data;
         if (selectedCard) {
           data = {
-            plan_timeperiod: params?.data?.selected_plan ? '2' : '1',
+            plan_timeperiod:
+              params?.data?.anually_price_id == params?.data?.monthly_price_id
+                ? 3
+                : params?.data?.selected_plan
+                ? '2'
+                : '1',
             price_id: params?.data?.selected_plan
               ? params?.data?.anually_price_id
               : params?.data?.monthly_price_id,
@@ -121,7 +128,12 @@ const Payment = (props: any) => {
         } else {
           data = {
             stripeToken: res.token.id,
-            plan_timeperiod: params?.data?.selected_plan ? '2' : '1',
+            plan_timeperiod:
+              params?.data?.anually_price_id == params?.data?.monthly_price_id
+                ? 3
+                : params?.data?.selected_plan
+                ? '2'
+                : '1',
             price_id: params?.data?.selected_plan
               ? params?.data?.anually_price_id
               : params?.data?.monthly_price_id,
@@ -132,6 +144,7 @@ const Payment = (props: any) => {
           };
         }
         const response = await PostApiWithToken(endPoint.buyPlan, data, token);
+        console.log(response?.data);
         if (response?.data?.status) {
           // getpaymentList();
           dispatch(reloadHandler({[ScreenNames.Home]: !homeReload}));
@@ -148,9 +161,7 @@ const Payment = (props: any) => {
     } finally {
       // addpayment && setaddpayment(false);
       showModal && setShowModal(true);
-      loading?.cardLoader &&
-        setLoading(preData => ({...preData, cardLoader: false}));
-      loading?.loader && setLoading(preData => ({...preData, loader: false}));
+      setLoading(preData => ({...preData, cardLoader: false,loader: false}));
       setSubmitLoader(false);
     }
   };
@@ -169,6 +180,7 @@ const Payment = (props: any) => {
           {stripeToken: stripeToken?.token.id},
           token,
         );
+        console.log(response?.data);
         if (response?.data?.status) {
           setaddpayment(value => !value);
           getCardList();

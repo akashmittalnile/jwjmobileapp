@@ -19,7 +19,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
-import {useNavigation, CommonActions} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import Wrapper from '../../components/Wrapper/Wrapper';
 import SubscriptionPlanHeader from '../../components/Subscription/SubscriptionPlanHeader';
 import SubscriptionBenifitViewer from '../../components/Subscription/SubscriptionBenifitViewer';
@@ -38,21 +38,11 @@ import {reloadHandler} from '../../redux/ReloadScreen';
 import Toast from 'react-native-toast-message';
 import ImageSkeleton from '../../components/Skeleton/ImageSkeleton';
 import ToggleSwitch from 'toggle-switch-react-native';
-import RNIap, {
-  finishTransaction,
-  purchaseUpdatedListener,
-  getSubscriptions,
-  purchaseErrorListener,
-  requestSubscription,
-  initConnection,
-  endConnection,
-} from 'react-native-iap';
 import {
   handleSubscription,
   subscribedToSubscriptionListener,
   unSubscribedToSubscriptionListener,
 } from '../../services/HandleIosSubscription';
-import {firebase} from '@react-native-firebase/firestore';
 
 const freeIconPath = Image.resolveAssetSource(freeIcon).uri;
 const planBIconPath = Image.resolveAssetSource(planBIcon).uri;
@@ -97,8 +87,19 @@ const SubscriptionPlans = () => {
       setMyPurchasedPlan(true);
     } else if (planDetails?.plan_timeperiod === 'Monthly') {
       setMyPurchasedPlan(false);
+    } else {
+      setMyPurchasedPlan(false);
     }
     getPlanHandler();
+    // getProducts({
+    //   skus: ['journeywithjournaltest'],
+    // })
+    //   .then((products: any) => {
+    //     console.log('Products:', products);
+    //   })
+    //   .catch((error: any) => {
+    //     console.log('Error fetching products:', error);
+    //   });
   }, []);
 
   React.useEffect(() => {
@@ -181,23 +182,24 @@ const SubscriptionPlans = () => {
 
   const goToHomeScreenHandler = async () => {
     try {
-      if (!currentPlan?.anually_price_id && !currentPlan?.monthly_price_id) {
-        setNextButtonLoader(true);
-        const response = await PostApiWithToken(
-          endPoint.buyFreePlan,
-          {plan_id: currentPlan?.id, price: 0},
-          token,
-        );
-        if (response?.data?.status) {
-          dispatch(reloadHandler({[ScreenNames.Home]: !homeReload}));
-        }
-        setNextButtonLoader(false);
-        Toast.show({
-          type: response?.data?.status ? 'success' : 'error',
-          text1: response?.data?.message,
-        });
-        navigation.navigate(ScreenNames.Home);
-      } else if (Platform.OS === 'android') {
+      // if (!currentPlan?.anually_price_id && !currentPlan?.monthly_price_id) {
+      //   setNextButtonLoader(true);
+      //   const response = await PostApiWithToken(
+      //     endPoint.buyFreePlan,
+      //     {plan_id: currentPlan?.id, price: 0},
+      //     token,
+      //   );
+      //   if (response?.data?.status) {
+      //     dispatch(reloadHandler({[ScreenNames.Home]: !homeReload}));
+      //   }
+      //   setNextButtonLoader(false);
+      //   Toast.show({
+      //     type: response?.data?.status ? 'success' : 'error',
+      //     text1: response?.data?.message,
+      //   });
+      //   navigation.navigate(ScreenNames.Home);
+      // }
+      if (Platform.OS === 'android') {
         navigation.navigate(ScreenNames.Payment, {data: currentPlan});
       } else {
         iosPlan && setNextButtonLoader(true);
@@ -218,14 +220,18 @@ const SubscriptionPlans = () => {
       if (toggle) {
         if (item?.name === 'Plan B') {
           setIosPlan('prod_PVqNani9ws1r6k');
-        } else {
+        } else if (item?.name === 'Plan C') {
           setIosPlan('prod_PVqNHEOuvDDSKy_plan_c_yearly');
+        } else {
+          setIosPlan('journeywithjournaltest');
         }
       } else {
         if (item?.name === 'Plan B') {
           setIosPlan('prod_PVqNani9ws1r6k_plan_b_monthly');
-        } else {
+        } else if (item?.name === 'Plan C') {
           setIosPlan('prod_PVqNHEOuvDDSKy_plan_c_monthly');
+        } else {
+          setIosPlan('journeywithjournaltest');
         }
       }
     }
@@ -275,18 +281,24 @@ const SubscriptionPlans = () => {
                 : ''
             }
             planPrice={
-              item?.monthly_price == 0
-                ? 'Free'
+              item?.name == 'Plan A'
+                ? `USD ${item?.monthly_price}`
                 : `${item?.currency.toUpperCase()} ${
                     toggle ? item?.anually_price : item?.monthly_price
                   }`
             }
-            planTenure={toggle ? '/ Per Year' : '/ Per Month'}
+            planTenure={
+              item?.name === 'Plan A'
+                ? ''
+                : toggle
+                ? '/ Per Year'
+                : '/ Per Month'
+            }
           />
           <View>
             <SubscriptionBenifitViewer text={item?.point1} />
             <SubscriptionBenifitViewer text={item?.point2} />
-            <SubscriptionBenifitViewer text={item?.point3} />
+            {/* <SubscriptionBenifitViewer text={item?.point3} /> */}
             <SubscriptionBenifitViewer text={item?.point4} />
           </View>
         </TouchableOpacity>
@@ -306,6 +318,8 @@ const SubscriptionPlans = () => {
               offColor="white"
               size="medium"
               onToggle={() => {
+                planDetails?.plan_timeperiod === 'One-Time' &&
+                  setMyPurchasedPlan(value => !value);
                 setToggle(value => !value);
                 setCurrentPlan(undefined);
               }}

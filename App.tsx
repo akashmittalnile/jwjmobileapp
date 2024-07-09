@@ -3,7 +3,11 @@ import {StatusBar, Platform} from 'react-native';
 import {Provider} from 'react-redux';
 import {store, useAppDispatch, useAppSelector} from './src/redux/Store';
 import {NavigationContainer} from '@react-navigation/native';
-import Toast from 'react-native-toast-message';
+import Toast, {
+  BaseToast,
+  ErrorToast,
+  InfoToast,
+} from 'react-native-toast-message';
 import MyNavigationContainer from './src/navigation/MyNavigationContainer';
 import NetInfo from '@react-native-community/netinfo';
 import NoInternet from './src/screens/NoInternet/NoInternet';
@@ -12,7 +16,49 @@ import {StripeProvider} from '@stripe/stripe-react-native';
 import messaging from '@react-native-firebase/messaging';
 import {triggerNotification} from './src/utils/Method';
 import {notificationCounter} from './src/redux/TrackNumbers';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import {responsiveHeight} from 'react-native-responsive-dimensions';
+
+const toastConfig = {
+  success: (props: any) => (
+    <BaseToast
+      {...props}
+      style={{
+        height: 'auto',
+        paddingVertical: responsiveHeight(1),
+        borderLeftColor: 'green',
+        minHeight: responsiveHeight(7),
+      }}
+      text1NumberOfLines={100}
+      text2NumberOfLines={100}
+    />
+  ),
+  error: (props: any) => (
+    <ErrorToast
+      {...props}
+      style={{
+        height: 'auto',
+        paddingVertical: responsiveHeight(1),
+        borderLeftColor: 'red',
+        minHeight: responsiveHeight(7),
+      }}
+      text1NumberOfLines={100}
+      text2NumberOfLines={100}
+    />
+  ),
+  info: (props: any) => (
+    <InfoToast
+      {...props}
+      style={{
+        height: 'auto',
+        paddingVertical: responsiveHeight(1),
+        borderLeftColor: 'yellow',
+        minHeight: responsiveHeight(7),
+      }}
+      text1NumberOfLines={100}
+      text2NumberOfLines={100}
+    />
+  ),
+};
 
 function App(): React.ReactElement {
   const [isInternetReachable, setIsInternetReachable] = useState<
@@ -30,7 +76,6 @@ function App(): React.ReactElement {
   }, []);
 
   useEffect(() => {
-    // triggerNotification()
     requestUserPermission()
       .then(permissionGranted => {
         if (permissionGranted) {
@@ -78,7 +123,7 @@ function App(): React.ReactElement {
               barStyle="light-content"
             />
             <MyNavigationContainer />
-            <Toast />
+            <Toast config={toastConfig} />
           </Provider>
         </NavigationContainer>
         {showNoInternet && (

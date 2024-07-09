@@ -34,11 +34,10 @@ import {useAppDispatch, useAppSelector} from '../../redux/Store';
 import Toast from 'react-native-toast-message';
 import {reloadHandler} from '../../redux/ReloadScreen';
 import ScreenNames from '../../utils/ScreenNames';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import DeleteModal from '../Modal/DeleteModal';
 import moment from 'moment';
 import RNFetchBlob from 'rn-fetch-blob';
-import {bool, boolean} from 'yup';
 
 interface EmojiTabProps {
   data?: any;
@@ -141,34 +140,54 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
       }
 
       const {config, fs} = RNFetchBlob;
-      const downloadDir = fs.dirs.DownloadDir;
+      const downloadDir =
+        Platform.OS === 'ios' ? fs?.dirs.DocumentDir : fs?.dirs.DownloadDir;
       const fileName = pdfLink.substring(pdfLink.lastIndexOf('/') + 1);
-      const path = `${downloadDir}/${fileName}`;
+      const path = `${downloadDir}/${fileName}.pdf`;
 
-      const options = {
+      const configfb = {
         fileCache: true,
         addAndroidDownloads: {
           useDownloadManager: true,
           notification: true,
+          mediaScannable: true,
+          title: `Invoice.pdf`,
           path,
-          description: 'Downloading PDF',
         },
+        useDownloadManager: true,
+        notification: true,
+        mediaScannable: true,
+        title: 'Invoice.pdf',
+        path,
       };
 
-      const response: any = await config(options).fetch('GET', pdfLink);
-      console.log(response);
-      if (response.info().status === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Pdf Downloaded Successfully',
-        });
+      const configOptions = Platform.select({
+        ios: configfb,
+        android: configfb,
+      });
+
+      const response = await RNFetchBlob.config(configOptions || {})?.fetch(
+        'GET',
+        pdfLink,
+      );
+      if (Platform.OS === 'ios') {
+        RNFetchBlob.fs.writeFile(configfb.path, response.data, 'base64');
+        RNFetchBlob.ios.previewDocument(configfb.path);
+      }
+      if (Platform.OS === 'android') {
+        console.log('file downloaded');
       }
     } catch (err: any) {
-      console.log('Error fetching PDF:', err?.message);
+      console.log('Error fetching PDF:', err.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Error downloading PDF',
+      });
     } finally {
       setPdfLoader(false);
     }
   };
+
   const permissionHandler = async () => {
     try {
       const hasPermission = await PermissionsAndroid.check(
@@ -178,7 +197,7 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
         fetchPdf();
         return;
       }
-  
+
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
         {
@@ -189,7 +208,7 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
           buttonPositive: 'OK',
         },
       );
-  
+
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         fetchPdf();
       } else if (granted === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
@@ -197,8 +216,8 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
           'Permission Denied',
           'You need to enable storage permission from the settings',
           [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+            {text: 'Cancel', style: 'cancel'},
+            {text: 'Open Settings', onPress: () => Linking.openSettings()},
           ],
         );
       } else {
@@ -207,13 +226,12 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
           'You need to give storage permission to download the file',
         );
       }
-    } catch (err:any) {
+    } catch (err: any) {
       console.log('Error requesting permission:', err.message);
     } finally {
       setPdfLoader(false);
     }
   };
-  
 
   const downloadPdf = async () => {
     setPdfLoader(true);

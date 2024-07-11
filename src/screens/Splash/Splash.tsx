@@ -20,6 +20,7 @@ import ScreenNames from '../../utils/ScreenNames';
 import {useAppDispatch} from '../../redux/Store';
 import {authHandler} from '../../redux/Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {endPoint, GetApiWithToken} from '../../services/Service';
 
 const Splash = () => {
   const navigation = useNavigation();
@@ -44,11 +45,30 @@ const Splash = () => {
     opacity: opacity.value,
   }));
 
+  const checkPlanDetails = async (token: string) => {
+    try {
+      const response = await GetApiWithToken(endPoint.profile, token);
+      if (response?.data?.status) {
+        if (!response?.data?.data?.current_plan?.name) {
+          dispatch(authHandler(token));
+          navigation.reset({
+            index: 0,
+            routes: [{name: ScreenNames.SubscriptionPlans}],
+          });
+        } else {
+          dispatch(authHandler(token));
+        }
+      }
+    } catch (err: any) {
+      console.log('error in bottom tab', err?.message);
+    }
+  };
+
   const getTokenFromLocal = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
       if (token) {
-        dispatch(authHandler(token));
+        checkPlanDetails(token);
       } else {
         navigation.reset({
           index: 0,

@@ -260,13 +260,15 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
                 styles.headerButtonContainer,
                 headerButtonContainerStyle,
               ]}>
-              <IconButton
-                loader={pdfLoader}
-                disable={pdfLoader}
-                iconUri={Image.resolveAssetSource(downloadIcon).uri}
-                onPress={downloadPdf}
-                style={{...styles.touch, width: responsiveWidth(10)}}
-              />
+              {pdfLink && (
+                <IconButton
+                  loader={pdfLoader}
+                  disable={pdfLoader}
+                  iconUri={Image.resolveAssetSource(downloadIcon).uri}
+                  onPress={downloadPdf}
+                  style={{...styles.touch, width: responsiveWidth(10)}}
+                />
+              )}
               {isEditable && (
                 <IconButton
                   iconUri={editIconPath}

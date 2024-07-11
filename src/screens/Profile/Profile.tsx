@@ -126,12 +126,12 @@ const Profile = () => {
   const renderCategoryTab = ({
     item,
   }: {
-    item: {uri: string; percentage: string; name: string};
+    item: {logo: string; avg: string; name: string};
   }) => (
     <IconTab
-      imageUri={item.uri}
+      imageUri={item.logo}
       text={item.name}
-      percentage={item.percentage}
+      percentage={item.avg}
       style={{borderColor: 'white'}}
       imageStyle={{height: '40%'}}
     />
@@ -169,18 +169,6 @@ const Profile = () => {
     }
   };
 
-  const findMoodIconUri = (name: string) => {
-    if (name?.toLowerCase() === 'happy') {
-      return Image.resolveAssetSource(happyIcon).uri;
-    } else if (name?.toLowerCase() === 'anger') {
-      return Image.resolveAssetSource(angryIcon).uri;
-    } else if (name?.toLowerCase() === 'sad') {
-      return Image.resolveAssetSource(sadIcon).uri;
-    } else {
-      return Image.resolveAssetSource(verySadIcon).uri;
-    }
-  };
-
   const getMoodData = async (date: string) => {
     try {
       const response = await GetApiWithToken(
@@ -188,17 +176,9 @@ const Profile = () => {
         token,
       );
       if (response?.data?.status) {
-        const arr = [];
-        for (const property in response?.data?.data?.average_mood_data) {
-          const name =
-            [...property][0]?.toUpperCase() +
-            property?.substring(1, property?.length);
-          arr.push({
-            name,
-            percentage: response?.data?.data?.average_mood_data[property],
-            uri: findMoodIconUri(property),
-          });
-        }
+        const arr = response?.data?.data?.average_mood_data?.map(
+          (item: any, index: number) => item,
+        );
         setMoodData(arr);
       }
     } catch (err: any) {
@@ -285,35 +265,37 @@ const Profile = () => {
                 }}
               />
             </View>
-            <View style={styles.todayMoodContainer}>
-              <Text
-                style={{
-                  ...styles.userName,
-                  color: globalStyles.themeBlue,
-                  marginBottom: responsiveHeight(1),
-                }}>
-                Today's Mood
-              </Text>
-              {profileData?.logo && (
-                <FastImage
-                  source={{uri: profileData?.logo}}
-                  resizeMode={FastImage?.resizeMode?.contain}
-                  style={{
-                    height: responsiveHeight(4),
-                    width: responsiveHeight(4),
-                  }}
-                />
-              )}
-              {profileData?.name && (
+            {profileData?.name && (
+              <View style={styles.todayMoodContainer}>
                 <Text
                   style={{
-                    fontSize: responsiveFontSize(1.5),
-                    fontWeight: '400',
+                    ...styles.userName,
+                    color: globalStyles.themeBlue,
+                    marginBottom: responsiveHeight(1),
                   }}>
-                  {profileData?.name}
+                  Today's Mood
                 </Text>
-              )}
-            </View>
+                {profileData?.logo && (
+                  <FastImage
+                    source={{uri: profileData?.logo}}
+                    resizeMode={FastImage?.resizeMode?.contain}
+                    style={{
+                      height: responsiveHeight(4),
+                      width: responsiveHeight(4),
+                    }}
+                  />
+                )}
+                {profileData?.name && (
+                  <Text
+                    style={{
+                      fontSize: responsiveFontSize(1.5),
+                      fontWeight: '400',
+                    }}>
+                    {profileData?.name}
+                  </Text>
+                )}
+              </View>
+            )}
           </Wrapper>
 
           {/* plan details */}

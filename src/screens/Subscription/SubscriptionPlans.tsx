@@ -298,7 +298,7 @@ const SubscriptionPlans = () => {
           <View>
             <SubscriptionBenifitViewer text={item?.point1} />
             <SubscriptionBenifitViewer text={item?.point2} />
-            {/* <SubscriptionBenifitViewer text={item?.point3} /> */}
+            <SubscriptionBenifitViewer text={item?.point3} />
             <SubscriptionBenifitViewer text={item?.point4} />
           </View>
         </TouchableOpacity>

@@ -7,6 +7,7 @@ import {
   PermissionsAndroid,
   Vibration,
   Platform,
+  TextInput,
   // NativeModules,
   // NativeEventEmitter,
 } from 'react-native';
@@ -31,7 +32,7 @@ interface TodayMoodProps {
 // const voiceDetails = NativeModules.Voice;
 // const voiceEmitter = new NativeEventEmitter(voiceDetails);
 
-let myText = '';
+let myText: any = null;
 
 const SpeakModal: React.FC<TodayMoodProps> = ({
   onPress,
@@ -45,22 +46,21 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
     React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (!oldText) {
-      setRecognizedText(value);
-    }
-    value && setOldText(value);
-  }, [value]);
+    myText = value ? value : '';
+    // if (!oldText) {
+    //   setRecognizedText(value);
+    // }
+    // value && setOldText(value);
+    setRecognizedText(value ? value : '');
+  }, []);
 
   React.useEffect(() => {
-    Voice.onSpeechStart = () => {
-      setIsListening(true);
-    };
-    Voice.onSpeechEnd = () => {
-      setOldText(preData => {
-        return preData + ' ' + myText;
-      });
-    };
-    Voice.onSpeechResults = onSpeechResults;
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechRecognized = onSpeechRecognized;
+    // Voice.onSpeechEnd = onSpeechEnd;
+    Voice.onSpeechError = onSpeechError;
+    Voice.onSpeechPartialResults = onSpeechResults;
+
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -83,9 +83,42 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
     }
   };
 
-  const onSpeechEndHandler = async (e: any) => {
-    // setIsListening(false);
-    Vibration?.vibrate(70);
+  const onSpeechStart = () => {
+    setIsListening(true);
+  };
+
+  const onSpeechRecognized = () => {
+    // console.log('Speech recognized');
+  };
+
+  // const onSpeechEnd = () => {
+  //   setIsListening(false);
+  // };
+
+  const onSpeechError = (error: any) => {
+    // console.error('Speech error: ', error);
+  };
+
+  const onSpeechResults = (event: any) => {
+    setRecognizedText(
+      myText ? myText + ' ' + event?.value[0] : event?.value[0],
+    );
+    // setRecognizedText(() => event.value[0]);
+  };
+
+  // const startListening = async () => {
+  //   try {
+  //     await Voice.start('en-US');
+  //   } catch (e) {
+  //     console.error(e);
+  //   }
+  // };
+
+  const stopListening = async () => {
+    setTimeout(() => {
+      myText = recognizedText;
+    }, 100);
+    setIsListening(false);
     try {
       await Voice.stop();
     } catch (e) {
@@ -93,17 +126,8 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
     }
   };
 
-  const onSpeechResults = (e: any) => {
-    setIsListening(false);
-    myText = e?.value;
-    setRecognizedText(() => {
-      return oldText + ' ' + e?.value;
-    });
-    !showFinishButton && setShowFinishButton(() => true);
-  };
-
   const _disableModalHandler = () => {
-    disableModal && disableModal(oldText);
+    disableModal && disableModal(myText);
   };
 
   return (
@@ -132,9 +156,12 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
               style={styles.headingImage}
             />
             <Text style={styles.speakText}>Speak!!!</Text>
-            <Text style={styles.thought}>
-              {recognizedText ? recognizedText : 'Your Thoughts'}
-            </Text>
+            <TextInput
+              value={recognizedText}
+              style={styles.thought}
+              editable={false}
+              multiline={true}
+            />
             <View style={styles.buttonContainer}>
               {
                 <View
@@ -146,8 +173,9 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
                   <View style={styles.micButton}>
                     <TouchableOpacity
                       style={styles.touch}
+                      // onPress={isListening ? stopListening : startListening}
                       onPressIn={onSpeechStartHandler}
-                      onPressOut={onSpeechEndHandler}>
+                      onPressOut={stopListening}>
                       <Image
                         source={require('../../assets/Icons/microphone-2.png')}
                         resizeMode="contain"
@@ -213,7 +241,9 @@ const styles = StyleSheet.create({
   thought: {
     marginTop: responsiveHeight(0.5),
     paddingHorizontal: 3,
+    width: '100%',
     color: globalStyles.midGray,
+    maxHeight: responsiveHeight(40),
   },
   buttonContainer: {
     marginTop: responsiveHeight(1),

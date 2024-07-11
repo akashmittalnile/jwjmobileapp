@@ -14,13 +14,11 @@ import {
 import React from 'react';
 import Header from '../../components/Header/Header';
 import {
-  responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import {useRoute, useNavigation, RouteProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../navigation/MainNavigation';
-import axios from 'axios';
 import {baseURL} from '../../services/Service';
 import {globalStyles} from '../../utils/constant';
 import DisableIconTab from '../../components/Tab/DIsableIconTab';
@@ -160,19 +158,14 @@ const AddNewJournals = () => {
     try {
       setLoader(true);
       const isCriteriaTagValid = criteriaValidator();
-      if (
-        title &&
-        content &&
-        mood &&
-        isCriteriaTagValid 
-      ) {
+      if (title && content && mood && isCriteriaTagValid) {
         let count = 0;
         const formData = new FormData();
         params?.data?.id && formData.append('id', params?.data?.id);
         formData.append('title', title);
         formData.append('content', content);
         formData.append('mood_id', mood);
-        console.log(criteria)
+        console.log(criteria);
         for (let i = 0; i < criteria?.length; i++) {
           if (params?.data?.id) {
             if (criteria[i]?.editable) {
@@ -267,13 +260,17 @@ const AddNewJournals = () => {
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      onTouchEnd={() => {
+        Keyboard?.isVisible() && Keyboard?.dismiss();
+      }}>
       <>
         <View style={styles.container}>
           <View style={styles.headerContainer}>
             <Header
               title={params?.data?.id ? 'Edit Journals' : 'Add New Journals'}
               notificationButton={false}
+              disableBackButton={loader}
             />
           </View>
           <View style={styles.subContainer}>
@@ -354,8 +351,8 @@ const AddNewJournals = () => {
                   style={{
                     borderWidth: responsiveWidth(0.2),
                     borderColor: err.content
-                    ? 'red'
-                    : globalStyles.borderColorBlue,
+                      ? 'red'
+                      : globalStyles.borderColorBlue,
                   }}
                 />
               </View>

@@ -46,7 +46,7 @@ import {notificationCounter, numberHandler} from '../../redux/TrackNumbers';
 import TodayMood from '../../components/Modal/TodayMood';
 import {err} from 'react-native-svg';
 
-const text = 'How are you feeling today ?';
+
 
 interface HomeData {
   mood: [{id: string; name: string; logo: string}];
@@ -100,20 +100,13 @@ const Home = () => {
   }, [reloadHome]);
 
   React.useEffect(() => {
-    GetApiWithToken(endPoint.home, token)
-      .then(response => {
-        if (response?.data?.status) {
-          getTodayMoodHandler(response?.data?.data[0]);
-        }
-      })
-      .catch(error => {
-        console.error('error in getting home screen mood data', error?.message);
-      });
+    getTodayMoodData();
   }, []);
 
   const onRefresh = async () => {
     setshouldRefresh(true);
     getHomeData();
+    getTodayMoodData();
     getNotificationCount();
     getUserDetails();
   };
@@ -143,6 +136,17 @@ const Home = () => {
       console.log('err homeData', err.message);
     } finally {
       setshouldRefresh(false);
+    }
+  };
+
+  const getTodayMoodData = async () => {
+    try {
+      const response = await GetApiWithToken(endPoint.home, token);
+      if (response?.data?.status) {
+        getTodayMoodHandler(response?.data?.data[0]);
+      }
+    } catch (error: any) {
+      console.error('error in getting home screen mood data', error?.message);
     }
   };
 

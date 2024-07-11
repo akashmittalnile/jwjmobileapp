@@ -19,7 +19,7 @@ import {Formik} from 'formik';
 import * as yup from 'yup';
 import KeyboardAvoidingViewWrapper from '../../components/Wrapper/KeyboardAvoidingViewWrapper';
 import ScreenNames from '../../utils/ScreenNames';
-import {PostApi, endPoint} from '../../services/Service';
+import {GetApiWithToken, PostApi, endPoint} from '../../services/Service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useAppDispatch} from '../../redux/Store';
 import {authHandler} from '../../redux/Auth';
@@ -68,6 +68,28 @@ const SignIn = () => {
     navigation.navigate(ScreenNames.ForgotPassword);
   };
 
+  const checkPlanDetails = async (token: string) => {
+    try {
+      const response = await GetApiWithToken(endPoint.profile, token);
+      if (response?.data?.status) {
+        if (!response?.data?.data?.current_plan?.name) {
+          await AsyncStorage.setItem('token', token);
+          dispatch(authHandler(token));
+          navigation.reset({
+            index: 0,
+            routes: [{name: ScreenNames.SubscriptionPlans}],
+          });
+        } else {
+          await AsyncStorage.setItem('token', token);
+          dispatch(authHandler(token));
+          navigation.navigate(ScreenNames.Drawer);
+        }
+      }
+    } catch (err: any) {
+      console.log('error in bottom tab', err?.message);
+    }
+  };
+
   const signInHanlder = async () => {
     try {
       setLoader(true);
@@ -76,23 +98,21 @@ const SignIn = () => {
         password: formikRef.current?.values?.password,
         fcm_token: fcmToken,
       });
-      if (response?.data?.status) {
-        firebase
-          ?.firestore()
-          .collection('fcm')
-          .doc(`${formikRef.current?.values?.email}`)
-          ?.collection('token')
-          ?.add({
-            token: fcmToken,
-          });
-        await AsyncStorage.setItem('token', response?.data?.data?.access_token);
-        dispatch(authHandler(response?.data?.data?.access_token));
-        navigation.navigate(ScreenNames.Drawer);
-      }
       Toast.show({
         type: response?.data?.status ? 'success' : 'error',
         text1: response?.data?.message,
       });
+      if (response?.data?.status) {
+        checkPlanDetails(response?.data?.data?.access_token);
+        // firebase
+        //   ?.firestore()
+        //   .collection('fcm')
+        //   .doc(`${formikRef.current?.values?.email}`)
+        //   ?.collection('token')
+        //   ?.add({
+        //     token: fcmToken,
+        //   });
+      }
     } catch (err: any) {
       console.log('err login', err.message);
     } finally {

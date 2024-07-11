@@ -5,6 +5,7 @@ import {
   Image,
   TextInput,
   Keyboard,
+  ViewStyle,
 } from 'react-native';
 import React from 'react';
 import Wrapper from '../Wrapper/Wrapper';
@@ -18,6 +19,7 @@ import BorderBtn from '../Button/BorderBtn';
 import IconButton from '../Button/IconButton';
 
 interface FormatInputProps {
+  ref?: any;
   placeholder?: string;
   textButtunIcon: string;
   micButtonIcon: string;
@@ -29,7 +31,7 @@ interface FormatInputProps {
   onChangeText?: (text: string) => void;
   value?: string;
   editable?: boolean;
-  style;
+  style?: ViewStyle;
 }
 
 const initialValue = {
@@ -47,6 +49,7 @@ const initialValue2 = {
 };
 
 const FormatInput: React.FC<FormatInputProps> = ({
+  ref,
   placeholder,
   textButtunIcon,
   micButtonIcon,
@@ -103,102 +106,12 @@ const FormatInput: React.FC<FormatInputProps> = ({
     }
   };
 
+  const handleScroll = () => {
+    !Keyboard.isVisible() && Keyboard.dismiss();
+  };
+
   return (
     <Wrapper containerStyle={{...styles.wrapper, ...style}}>
-      {/* <View style={styles.header}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            width: '45%',
-          }}>
-          <TouchableOpacity
-            onPress={() => fontStyleHandler({bold: true})}
-            style={{
-              backgroundColor: fontStyle.bold
-                ? globalStyles.veryLightGray
-                : 'transparent',
-            }}>
-            <Image
-              source={require('../../assets/Icons/bold.png')}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => fontStyleHandler({italic: true})}
-            style={{
-              backgroundColor: fontStyle.italic
-                ? globalStyles.veryLightGray
-                : 'transparent',
-            }}>
-            <Image
-              source={require('../../assets/Icons/italic.png')}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => fontStyleHandler({underline: true})}
-            style={{
-              backgroundColor: fontStyle.underline
-                ? globalStyles.veryLightGray
-                : 'transparent',
-            }}>
-            <Image
-              source={require('../../assets/Icons/underline.png')}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/Icons/automatic.png')}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            width: '45%',
-          }}>
-          <TouchableOpacity
-            onPress={() => fontAlignmentHandler({left: true})}
-            style={{
-              backgroundColor: fontAlignment.left
-                ? globalStyles.veryLightGray
-                : 'transparent',
-            }}>
-            <Image
-              source={require('../../assets/Icons/Paragraph-left.png')}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => fontAlignmentHandler({center: true})}
-            style={{
-              backgroundColor: fontAlignment.center
-                ? globalStyles.veryLightGray
-                : 'transparent',
-            }}>
-            <Image
-              source={require('../../assets/Icons/Paragraph-center.png')}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/Icons/Paragraph-bullet.png')}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <Image
-              source={require('../../assets/Icons/Paragraph-3.png')}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-        </View>
-      </View> */}
       <View style={styles.textInputContainer}>
         <TextInput
           editable={editable}
@@ -206,10 +119,15 @@ const FormatInput: React.FC<FormatInputProps> = ({
           placeholder={placeholder}
           placeholderTextColor={globalStyles.textGray}
           onChangeText={textHandler}
-          blurOnSubmit={true}
-          onSubmitEditing={() => {
-            Keyboard.dismiss();
+          onBlur={e => {
+            console.log('textinput lost focused', e?.nativeEvent);
+            Keyboard?.dismiss();
           }}
+          onScroll={handleScroll}
+          // blurOnSubmit={true}
+          // onSubmitEditing={() => {
+          //   Keyboard.dismiss();
+          // }}
           style={[
             styles.textInput,
             fontStyle.bold && {fontWeight: 'bold'},

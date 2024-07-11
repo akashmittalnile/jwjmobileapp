@@ -107,6 +107,7 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
     return (
       <TouchableOpacity
         disabled={disable}
+        onLongPress={() => {console.log('hello')}}
         style={[
           styles.date,
           {

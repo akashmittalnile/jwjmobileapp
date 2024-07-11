@@ -46,43 +46,7 @@ const DrawerNavigation = () => {
   const unSeenMessage = useAppSelector(
     state => state.TrackNumber.unSeenMessage,
   );
-
-  // React.useEffect(() => {
-  //   const _unsubscribe = () => {
-  //     if (userDetails?.id) {
-  //       return firebase
-  //         ?.firestore()
-  //         ?.collection('jwj_chats')
-  //         ?.doc(`1-${userDetails?.id}`)
-  //         ?.collection('messages')
-  //         ?.orderBy('createdAt', 'desc')
-  //         ?.onSnapshot(onMessageReceived);
-  //     }
-  //     return () => {};
-  //   };
-
-  //   const unsubscribe = _unsubscribe();
-
-  //   return () => unsubscribe();
-  // }, [userDetails?.id]);
-
-  // const onMessageReceived = (snapshot: any) => {
-  //   snapshot?.docChanges().forEach((change: any) => {
-  //     if (
-  //       change.type === 'added' &&
-  //       change.doc.data()?.sendBy != userDetails?.id
-  //     ) {
-  //       dispatch(numberHandler({unSeenMessage: unSeenMessage + 1}));
-  //     }
-  //     // if (change.type === 'added') {
-  //     //   console.log('called!!')
-
-  //     //   // const newMessage = change.doc.data();
-  //     //   // dispatch(numberHandler({unSeenMessage: unSeenMessage + 1}));
-  //     // }
-  //   });
-  // };
-  // console.log({unSeenMessage});
+  
   const logoutHandler = () => {
     setModalVisible(true);
   };
@@ -109,6 +73,7 @@ const DrawerNavigation = () => {
       setLogoutLoader(true);
       const response = await GetApiWithToken(endPoint.logout, token);
       if (response?.data?.status) {
+        
         await AsyncStorage.clear();
         setModalVisible(false);
         dispatch(authHandler(''));
@@ -287,7 +252,7 @@ const DrawerNavigation = () => {
                   <TouchableOpacity
                     style={styles.touch}
                     onPress={() => {
-                      deepLinkHandler('https://www.facebook.com');
+                      deepLinkHandler('https://www.facebook.com/profile.php?id=61559025368524&mibextid=JRoKGi');
                     }}>
                     <Image
                       resizeMode="contain"
@@ -315,7 +280,7 @@ const DrawerNavigation = () => {
                   <TouchableOpacity
                     style={styles.touch}
                     onPress={() => {
-                      deepLinkHandler('https://www.instagram.com');
+                      deepLinkHandler('https://www.instagram.com/journeywithjournals/');
                     }}>
                     <Image
                       resizeMode="contain"

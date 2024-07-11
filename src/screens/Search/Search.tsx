@@ -182,7 +182,6 @@ const Search = () => {
             <SearchBarWithInsideIcon
               searchKey="search"
               style={styles.searchBar}
-              focus={true}
               onSearch={key => {
                 getData(key);
               }}
@@ -296,6 +295,7 @@ const Search = () => {
                           emojiText={item?.mood_name}
                           description={item?.content}
                           date={item?.created_at}
+                          pdfLink={item?.download_pdf}
                         />
                       ))}
                     </View>

@@ -21,16 +21,18 @@ import KeyboardAvoidingViewWrapper from '../../components/Wrapper/KeyboardAvoidi
 import ScreenNames from '../../utils/ScreenNames';
 import {GetApiWithToken, PostApi, endPoint} from '../../services/Service';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useAppDispatch} from '../../redux/Store';
+import {useAppDispatch, useAppSelector} from '../../redux/Store';
 import {authHandler} from '../../redux/Auth';
 import Toast from 'react-native-toast-message';
 import messaging from '@react-native-firebase/messaging';
 import {firebase} from '@react-native-firebase/firestore';
+import {userDetailsHandler} from '../../redux/UserDetails';
 
 const SignIn = () => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const focused = useIsFocused();
+  const isSubscribed = useAppSelector(state => state.userDetails.isSubscribed);
   const formikRef = React.useRef<Formik>();
   const [loader, setLoader] = React.useState<boolean>(false);
   const [fcmToken, setFcmToken] = React.useState<string>('');
@@ -74,6 +76,13 @@ const SignIn = () => {
       if (response?.data?.status) {
         if (!response?.data?.data?.current_plan?.name) {
           await AsyncStorage.setItem('token', token);
+          dispatch(
+            userDetailsHandler({
+              isSubscribed: response?.data?.data?.current_plan?.name
+                ? true
+                : false,
+            }),
+          );
           dispatch(authHandler(token));
           navigation.reset({
             index: 0,

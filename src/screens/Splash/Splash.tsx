@@ -21,6 +21,7 @@ import {useAppDispatch} from '../../redux/Store';
 import {authHandler} from '../../redux/Auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {endPoint, GetApiWithToken} from '../../services/Service';
+import { userDetailsHandler } from '../../redux/UserDetails';
 
 const Splash = () => {
   const navigation = useNavigation();
@@ -51,6 +52,11 @@ const Splash = () => {
       if (response?.data?.status) {
         if (!response?.data?.data?.current_plan?.name) {
           dispatch(authHandler(token));
+          dispatch(userDetailsHandler({
+            isSubscribed: response?.data?.data?.current_plan?.name
+              ? true
+              : false,
+          }))
           navigation.reset({
             index: 0,
             routes: [{name: ScreenNames.SubscriptionPlans}],

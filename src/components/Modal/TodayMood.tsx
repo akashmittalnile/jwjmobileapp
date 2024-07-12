@@ -110,8 +110,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: responsiveHeight(1),
     right: responsiveWidth(2),
-    height: responsiveHeight(2.5),
-    width: responsiveHeight(2.5),
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: responsiveHeight(3.5),
+    width: responsiveHeight(3.5),
   },
   icon: {
     height: responsiveHeight(2.5),

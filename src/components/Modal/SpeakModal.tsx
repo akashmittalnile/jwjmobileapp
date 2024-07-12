@@ -174,7 +174,7 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
                     <TouchableOpacity
                       style={styles.touch}
                       // onPress={isListening ? stopListening : startListening}
-                      onPressIn={onSpeechStartHandler}
+                      onLongPress={onSpeechStartHandler}
                       onPressOut={stopListening}>
                       <Image
                         source={require('../../assets/Icons/microphone-2.png')}
@@ -186,17 +186,40 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
                       />
                     </TouchableOpacity>
                   </View>
-                  {showFinishButton && (
-                    <BorderBtn
-                      buttonText="Finish"
-                      onClick={_disableModalHandler}
-                      containerStyle={{
-                        ...styles.micButton,
-                        marginLeft: responsiveWidth(2),
-                      }}
-                      buttonTextStyle={{fontSize: responsiveFontSize(2)}}
-                    />
-                  )}
+                  <View
+                    style={{
+                      ...styles.micButton,
+                      marginLeft: responsiveWidth(2),
+                      backgroundColor:
+                        recognizedText?.length === 0
+                          ? 'rgba(0,0,0,0.4)'
+                          : globalStyles.themeBlue,
+                    }}>
+                    <TouchableOpacity
+                      disabled={recognizedText?.length === 0}
+                      style={styles.touch}
+                      // onPress={isListening ? stopListening : startListening}
+                      onPress={_disableModalHandler}>
+                      <Text
+                        style={{
+                          color: 'white',
+                          fontSize: responsiveFontSize(2),
+                          fontWeight: '600',
+                        }}>
+                        Finish
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  {/* <BorderBtn
+                    disable={recognizedText?.length === 0}
+                    buttonText="Finish"
+                    onClick={_disableModalHandler}
+                    containerStyle={{
+                      ...styles.micButton,
+                      marginLeft: responsiveWidth(2),
+                    }}
+                    buttonTextStyle={{fontSize: responsiveFontSize(2)}}
+                  /> */}
                 </View>
               }
             </View>

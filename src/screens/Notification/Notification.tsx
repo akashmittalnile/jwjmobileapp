@@ -138,7 +138,7 @@ const Notification = () => {
   };
 
   const noDataFound = (
-    <View style={{marginVertical: responsiveHeight(2), width: '100%'}}>
+    <View style={{marginTop: responsiveHeight(17),marginVertical: responsiveHeight(2), width: '100%'}}>
       <Image
         source={require('../../assets/Icons/no-data-found.png')}
         resizeMode="contain"

@@ -74,16 +74,26 @@ const Journal: React.FC<ToadyCommunityPorps> = ({data, style}) => {
               ]}
               imageStyle={styles.imageSlider}
             />
-            {!imageData && <View style={{position: 'absolute', bottom: 0, right: 0, left: 0, justifyContent: 'center', alignItems: 'center', }}>
-              <Text style={{color: 'black', fontSize: responsiveFontSize(2)}}>No Image</Text>
-            </View>}
+            {!imageData && (
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: responsiveHeight(2),
+                  right: 0,
+                  left: 0,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text style={{color: 'black', fontSize: responsiveFontSize(2)}}>
+                  No Image
+                </Text>
+              </View>
+            )}
           </View>
           <View
             style={{
-              flexDirection: 'row',
               alignItems: 'center',
               width: style?.width,
-              paddingLeft: '5%',
               marginTop: responsiveHeight(-1),
             }}>
             {item?.mood_logo && (
@@ -101,13 +111,26 @@ const Journal: React.FC<ToadyCommunityPorps> = ({data, style}) => {
             )}
             <Text
               style={{
+                marginTop: responsiveHeight(0.5),
                 color: 'black',
                 fontWeight: '400',
-                paddingLeft: '1%',
               }}>
-              {item?.title}
+              {item?.mood_name}
             </Text>
           </View>
+          <Text
+            style={{
+              marginTop: responsiveHeight(1),
+              paddingHorizontal: responsiveWidth(5),
+              // paddingHorizontal: '5%',
+              color: globalStyles.textGray,
+              fontWeight: '800',
+              letterSpacing: 1.5,
+              fontSize: responsiveFontSize(1.6),
+              width: style?.width,
+            }}>
+            {item?.title}
+          </Text>
           <Text
             style={{
               marginTop: responsiveHeight(0.5),

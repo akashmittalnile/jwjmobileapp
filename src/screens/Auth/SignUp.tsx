@@ -33,6 +33,7 @@ import {RootStackParamList} from '../../navigation/MainNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authHandler} from '../../redux/Auth';
 import {useAppDispatch} from '../../redux/Store';
+import {userDetailsHandler} from '../../redux/UserDetails';
 
 const userIconPath = Image.resolveAssetSource(userIcon).uri;
 const userIconPath3 = Image.resolveAssetSource(userIcon3).uri;
@@ -107,7 +108,16 @@ const SignUp: React.FC<SignUpProps> = () => {
             response?.data?.data?.access_token,
           );
           dispatch(authHandler(response?.data?.data?.access_token));
-          navigation.navigate(ScreenNames.SubscriptionPlans);
+          dispatch(
+            userDetailsHandler({
+              isSubscribed: false,
+            }),
+          );
+          // navigation.navigate(ScreenNames.SubscriptionPlans);
+          navigation.reset({
+            index: 0,
+            routes: [{name: ScreenNames.SubscriptionPlans}],
+          });
         }
         Toast.show({
           type: response?.data?.status ? 'success' : 'error',

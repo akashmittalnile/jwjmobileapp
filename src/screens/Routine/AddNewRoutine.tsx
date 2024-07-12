@@ -240,7 +240,7 @@ const AddNewRoutine = () => {
         },
       );
       const data = await response?.json();
-      if (response?.ok) {
+      if (data?.status) {
         dispatch(
           reloadHandler({
             [ScreenNames.Routine]: !reload.Routine,
@@ -252,7 +252,7 @@ const AddNewRoutine = () => {
         navigation.goBack();
       }
       Toast.show({
-        type: response?.ok ? 'success' : 'error',
+        type: data?.status ? 'success' : 'error',
         text1: data?.message,
       });
     } catch (err: any) {

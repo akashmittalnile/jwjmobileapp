@@ -256,7 +256,9 @@ const Calendar = () => {
                 onPress={() => {
                   goToJournalInfo(item?.id);
                 }}
-                date={item?.created_at}
+                date={moment(item?.created_at, 'DD MMM, YYYY hh:mm A').format(
+                  'MMM DD, YYYY hh:mm A',
+                )}
               />
             ))}
           </>
@@ -287,7 +289,9 @@ const Calendar = () => {
                 onPress={() => {
                   goToRoutineDetails(item?.routineid);
                 }}
-                date={item?.created_at}
+                date={moment(item?.created_at, 'DD MMM, YYYY hh:mm A').format(
+                  'MMM DD, YYYY hh:mm A',
+                )}
                 routineType={
                   item?.createdBy === 'mySelf'
                     ? 'Private Routine'

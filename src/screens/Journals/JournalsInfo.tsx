@@ -232,8 +232,10 @@ const styles = StyleSheet.create({
   },
   storyText: {
     marginTop: responsiveHeight(0.5),
-    marginBottom: responsiveHeight(0.5),
+    marginBottom: responsiveHeight(1),
     fontSize: responsiveFontSize(1.6),
+    width: '100%',
+    textAlign: 'left',
     fontWeight: '400',
     color: globalStyles.textGray,
     letterSpacing: 1,

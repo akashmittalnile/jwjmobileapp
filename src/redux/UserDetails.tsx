@@ -1,4 +1,3 @@
-import {DarkTheme} from '@react-navigation/native';
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 interface userDetailsProps {
@@ -11,6 +10,7 @@ interface userDetailsProps {
   profileImage: string;
   adminProfileImage: string;
   currentPlan: string;
+  isSubscribed: boolean;
   userName: string;
   ratingSubmit: boolean;
   showLogoutModal: boolean;
@@ -28,6 +28,7 @@ const initialState = {
   cca2: '',
   profileImage: '',
   currentPlan: {name: '', price: '', plan_timeperiod: ''},
+  isSubscribed: true,
   userName: '',
   ratingSubmit: false,
   showLogoutModal: false,

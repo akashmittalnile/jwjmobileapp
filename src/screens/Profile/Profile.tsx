@@ -204,7 +204,7 @@ const Profile = () => {
     setShowDateModal(false);
     getInitialData(_date);
   };
-
+  console.log(userDetails?.currentPlan);
   return (
     <View style={styles.container}>
       <HomeHeader />
@@ -323,8 +323,8 @@ const Profile = () => {
                     fontSize: responsiveFontSize(2.8),
                     fontWeight: '500',
                   }}>
-                  {userDetails?.currentPlan?.price === '0'
-                    ? 'FREE'
+                  {!userDetails?.currentPlan?.name
+                    ? 'Get Subscription'
                     : '$' +
                       userDetails?.currentPlan?.price +
                       findTenure(userDetails?.currentPlan?.plan_timeperiod)}

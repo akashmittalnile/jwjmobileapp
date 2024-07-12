@@ -73,8 +73,10 @@ const Journals = () => {
     loader && !showSkeleton && setShowSkeleton(true);
     let _endpoint = `${endPoint.journals}${key}`;
     if (key?.includes('title') && date) {
+      console.log({date});
       _endpoint = `${endPoint.journals}${key}&date=${date}`;
     }
+    console.log(_endpoint);
     try {
       const response = await GetApiWithToken(_endpoint, token);
       if (response?.data?.status) {
@@ -140,17 +142,14 @@ const Journals = () => {
     navigation.navigate(ScreenNames.JournalsInfo, {journalsId});
   };
 
-  const debouncedSearch = useMemo(
-    () =>
-      debounce(text => {
-        pagination.currentPage = 1;
-        pagination.lastPage = 1;
-        pagination.loader = false;
-        setSearch(text?.split('=')[1]);
-        getJournalsList(text, true);
-      }, 500),
-    [],
-  );
+  const debouncedSearch = (text: any) => {
+    console.log({text});
+    pagination.currentPage = 1;
+    pagination.lastPage = 1;
+    pagination.loader = false;
+    setSearch(text?.split('=')[1]);
+    getJournalsList(text, true);
+  };
 
   const searchBar = (
     <SearchBarWithInsideIcon
@@ -223,7 +222,7 @@ const Journals = () => {
   );
 
   const renderData = useCallback(
-    ({item}) => (
+    ({item}: {item: any}) => (
       <EmojiTab
         data={item}
         id={item.id}

@@ -145,6 +145,9 @@ export const triggerNotification = async (
 };
 
 export const findTenure = (timePeriod: string) => {
+  if (!timePeriod) {
+    return ''
+  }
   if (timePeriod?.toLowerCase() === 'monthly') {
     return '/Month';
   } else if (timePeriod?.toLowerCase() === 'yearly') {

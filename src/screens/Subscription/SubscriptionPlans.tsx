@@ -24,7 +24,7 @@ import Wrapper from '../../components/Wrapper/Wrapper';
 import SubscriptionPlanHeader from '../../components/Subscription/SubscriptionPlanHeader';
 import SubscriptionBenifitViewer from '../../components/Subscription/SubscriptionBenifitViewer';
 import BorderBtn from '../../components/Button/BorderBtn';
-import freeIcon from '../../assets/Icons/free.png';
+import freeIcon from '../../assets/Icons/PlanA.png';
 import planBIcon from '../../assets/Icons/plan-b.png';
 import planCIcon from '../../assets/Icons/plan-c.png';
 import ScreenNames from '../../utils/ScreenNames';
@@ -72,6 +72,9 @@ const SubscriptionPlans = () => {
   const homeReload = useAppSelector(state => state.reload.Home);
   const token = useAppSelector(state => state.auth.token);
   const planDetails = useAppSelector(state => state.userDetails.currentPlan);
+  const showBackButton = useAppSelector(
+    state => state.userDetails.isSubscribed,
+  );
   const [plans, setPlans] = React.useState<[]>([]);
   const [currentPlan, setCurrentPlan] = React.useState<plan | undefined>();
   const [iosPlan, setIosPlan] = React.useState<string>('');
@@ -118,7 +121,12 @@ const SubscriptionPlans = () => {
     try {
       if (_response && _response.transactionReceipt) {
         const data = {
-          plan_timeperiod: toggle ? '2' : '1',
+          plan_timeperiod:
+            currentPlan?.anually_price_id === currentPlan?.monthly_price_id
+              ? '3'
+              : toggle
+              ? '2'
+              : '1',
           price_id: toggle
             ? currentPlan?.anually_price_id
             : currentPlan?.monthly_price_id,
@@ -310,7 +318,7 @@ const SubscriptionPlans = () => {
     <>
       <View style={{...styles.container, backgroundColor: '#F0F0F0'}}>
         <View style={styles.headerContainer}>
-          <Header title="Subscription Plan" />
+          <Header title="Subscription Plan" backButton={showBackButton} />
           <View style={styles.switchBtnContainer}>
             <ToggleSwitch
               isOn={toggle}

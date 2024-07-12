@@ -315,7 +315,7 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
               style={{...styles.img, ...iconStyle}}
               resizeMode={FastImage.resizeMode.contain}
             />
-            <Text style={[styles.text, {paddingLeft: responsiveWidth(2)}]}>
+            <Text style={[styles.text]}>
               {emojiText}
             </Text>
           </View>
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   imgTextContainer: {
-    flexDirection: 'row',
+    // flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: '95%',

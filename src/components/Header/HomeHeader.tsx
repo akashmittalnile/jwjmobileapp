@@ -118,8 +118,8 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({
                 )}
 
                 <View style={styles.textContainer}>
-                  <Text style={styles.text}>Hi,</Text>
-                  <Text style={[styles.text, {fontWeight: '700'}]}>{name}</Text>
+                  <Text style={{...styles.text}}>Hi </Text>
+                  <Text style={[styles.text]}>{name?.split(' ')[0]}</Text>
                 </View>
               </TouchableOpacity>
             </View>
@@ -191,6 +191,7 @@ const styles = StyleSheet.create({
   touch: {
     position: 'relative',
     flexDirection: 'row',
+    alignItems: 'center',
     height: '100%',
   },
   notificationDotContainer: {
@@ -207,12 +208,15 @@ const styles = StyleSheet.create({
     width: responsiveWidth(6),
   },
   textContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingLeft: responsiveWidth(2),
     justifyContent: 'center',
   },
   text: {
     color: 'white',
-    fontSize: responsiveFontSize(1.8),
+    fontSize: responsiveFontSize(2.2),
     lineHeight: responsiveHeight(2.5),
+    fontWeight: '600',
   },
 });

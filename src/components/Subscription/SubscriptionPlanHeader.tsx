@@ -10,6 +10,7 @@ import {
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import {globalStyles} from '../../utils/constant';
+import SvgUri from 'react-native-svg-uri';
 
 interface SubscriptionPlanHeaderProps {
   imageUrl?: string;
@@ -28,6 +29,7 @@ const SubscriptionPlanHeader: React.FC<SubscriptionPlanHeaderProps> = ({
   planTenure,
   containerStyle,
 }) => {
+  // console.log(imageUrl)
   return (
     <View style={[styles.container, containerStyle]}>
       <View style={styles.imgSection}>

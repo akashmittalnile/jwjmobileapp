@@ -46,7 +46,7 @@ const DrawerNavigation = () => {
   const unSeenMessage = useAppSelector(
     state => state.TrackNumber.unSeenMessage,
   );
-  
+
   const logoutHandler = () => {
     setModalVisible(true);
   };
@@ -73,7 +73,6 @@ const DrawerNavigation = () => {
       setLogoutLoader(true);
       const response = await GetApiWithToken(endPoint.logout, token);
       if (response?.data?.status) {
-        
         await AsyncStorage.clear();
         setModalVisible(false);
         dispatch(authHandler(''));
@@ -160,11 +159,31 @@ const DrawerNavigation = () => {
               />
 
               <Tab
-                name="Record Journals"
+                name="Journals"
                 imageUri={require('../assets/Icons/menu-board.png')}
                 onPress={() => {
                   props.navigation.closeDrawer();
                   props.navigation.navigate(ScreenNames.Journals);
+                }}
+                selected={false}
+              />
+
+              <Tab
+                name="Communities"
+                imageUri={require('../assets/Icons/community-white.png')}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  props.navigation.navigate(ScreenNames.Community);
+                }}
+                selected={false}
+              />
+
+              <Tab
+                name="Routines"
+                imageUri={require('../assets/Icons/routine-white.png')}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  props.navigation.navigate(ScreenNames.Routine);
                 }}
                 selected={false}
               />
@@ -252,7 +271,9 @@ const DrawerNavigation = () => {
                   <TouchableOpacity
                     style={styles.touch}
                     onPress={() => {
-                      deepLinkHandler('https://www.facebook.com/profile.php?id=61559025368524&mibextid=JRoKGi');
+                      deepLinkHandler(
+                        'https://www.facebook.com/profile.php?id=61559025368524&mibextid=JRoKGi',
+                      );
                     }}>
                     <Image
                       resizeMode="contain"
@@ -280,7 +301,9 @@ const DrawerNavigation = () => {
                   <TouchableOpacity
                     style={styles.touch}
                     onPress={() => {
-                      deepLinkHandler('https://www.instagram.com/journeywithjournals/');
+                      deepLinkHandler(
+                        'https://www.instagram.com/journeywithjournals/',
+                      );
                     }}>
                     <Image
                       resizeMode="contain"

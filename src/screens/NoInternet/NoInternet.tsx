@@ -46,7 +46,8 @@ const NoInternet: React.FC<NoInternetProps> = ({
 
   const checkInternet = async () => {
     const state = await NetInfo.fetch();
-    if (state.isConnected && state.isInternetReachable) {
+    // if (state.isConnected && state.isInternetReachable) {
+    if (state.isInternetReachable) {
       setShow && setShow(false);
       setIsInternetReachable && setIsInternetReachable(true);
     } else {

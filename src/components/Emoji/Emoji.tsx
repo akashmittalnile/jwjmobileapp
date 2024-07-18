@@ -13,6 +13,7 @@ import React from 'react';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
 import {globalStyles} from '../../utils/constant';
 import FastImage from 'react-native-fast-image';
+import {moodColorHandler} from '../../utils/Method';
 
 interface EmojiProps {
   style?: ViewStyle;
@@ -30,16 +31,6 @@ const Emoji: React.FC<EmojiProps> = ({
   textStyle,
   onPress,
 }) => {
-  const colorHandler = (value: string) => {
-    if (value == 'happy') {
-      return '#FFD800';
-    } else if (value == 'sad') {
-      return '#6CB4EE';
-    } else if (value == 'anger') {
-      return 'red';
-    }
-    return 'gray';
-  };
   return (
     <View style={[styles.container, style]}>
       <TouchableOpacity onPress={onPress} style={styles.touch}>
@@ -68,7 +59,7 @@ const Emoji: React.FC<EmojiProps> = ({
           <Text
             style={[
               styles.text,
-              {color: colorHandler(text?.toLowerCase())},
+              {color: moodColorHandler(text?.toLowerCase())},
               textStyle,
             ]}>
             {text}
@@ -105,5 +96,6 @@ const styles = StyleSheet.create({
     fontSize: responsiveHeight(1.6),
     fontWeight: '500',
     color: globalStyles.themeBlue,
+    textAlign: 'center',
   },
 });

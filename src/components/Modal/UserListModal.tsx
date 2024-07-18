@@ -294,7 +294,6 @@ export default UserListModal;
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
     top: 0,
@@ -305,6 +304,7 @@ const styles = StyleSheet.create({
   },
   subContainer: {
     position: 'relative',
+    marginTop: responsiveHeight(20),
     paddingTop: responsiveHeight(2),
     paddingBottom: responsiveHeight(2),
     paddingHorizontal: responsiveWidth(4),
@@ -357,6 +357,6 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(2),
     fontWeight: '400',
     textAlign: 'center',
-    color: 'black'
+    color: 'black',
   },
 });

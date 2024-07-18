@@ -27,6 +27,7 @@ import {useAppSelector} from '../../redux/Store';
 import ImageSlider from '../../components/Slider/ImageSlider';
 import ScreenNames from '../../utils/ScreenNames';
 import moment from 'moment';
+import {moodColorHandler} from '../../utils/Method';
 
 type JournalsInfoRouteParams = RouteProp<RootStackParamList, 'JournalsInfo'>;
 const JournalsInfo = () => {
@@ -109,7 +110,13 @@ const JournalsInfo = () => {
                     style={styles.emojiIcon}
                   />
                 )}
-                <Text style={styles.emojiText}>{data?.mood_name}</Text>
+                <Text
+                  style={{
+                    ...styles.emojiText,
+                    color: moodColorHandler(data?.mood_name),
+                  }}>
+                  {data?.mood_name}
+                </Text>
               </View>
 
               {/* story heading */}

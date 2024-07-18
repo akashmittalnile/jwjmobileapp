@@ -46,7 +46,8 @@ const ImageSlider: React.FC<ImageSliderProps> = ({
   };
 
   const ImageModalHandler = (uri: string) => {
-    showImageViewer && dispatch(showImageViewerHandler({show: true, uri}));
+    showImageViewer &&
+      dispatch(showImageViewerHandler({show: true, uri: data}));
   };
 
   const renderImageItem = ({item}: {item: string}) => (

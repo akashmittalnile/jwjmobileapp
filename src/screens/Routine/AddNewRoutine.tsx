@@ -168,7 +168,6 @@ const AddNewRoutine = () => {
     try {
       if (
         task.length === 0 ||
-        subTitle?.length === 0 ||
         (Array.isArray(time) && time?.length === 0) ||
         description?.length === 0
       ) {
@@ -178,9 +177,9 @@ const AddNewRoutine = () => {
         if (task?.length === 0) {
           setErr(preData => ({...preData, title: true}));
         }
-        if (subTitle?.length === 0) {
-          setErr(preData => ({...preData, subtitle: true}));
-        }
+        // if (subTitle?.length === 0) {
+        //   setErr(preData => ({...preData, subtitle: true}));
+        // }
         if (time?.length === 0) {
           setErr(preData => ({...preData, time: true}));
         }
@@ -189,7 +188,7 @@ const AddNewRoutine = () => {
       const formData = new FormData();
       formData.append('name', task);
       formData.append('description', description);
-      formData.append('subtitle', subTitle);
+      // formData.append('subtitle', subTitle);
       formData.append('category_id', goalId);
       if (Array.isArray(time)) {
         for (let i = 0; i < time?.length; i++) {
@@ -286,7 +285,7 @@ const AddNewRoutine = () => {
           placeholderTextColor="gray"
         />
 
-        <TextInput
+        {/* <TextInput
           value={subTitle}
           onChangeText={text => {
             setSubTitle(text);
@@ -299,7 +298,7 @@ const AddNewRoutine = () => {
           }}
           placeholder="Routine Subtitle"
           placeholderTextColor="gray"
-        />
+        /> */}
 
         {/* select time */}
 

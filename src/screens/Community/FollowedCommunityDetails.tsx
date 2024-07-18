@@ -7,14 +7,12 @@ import {
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../navigation/MainNavigation';
-import prayerPath from '../../assets/Images/prayer.png';
+import {RootStackParamList} from '../../navigation/MainNavigation'
 import FollowedCommunityTab from '../../components/CommunityListItem/FollowedCommunityTab';
 import {Dropdown} from 'react-native-element-dropdown';
 import {globalStyles} from '../../utils/constant';
 import FollowedCommunityDetailsTab from '../../components/CommunityListItem/FollowedCommunityDetailsTab';
 import ScreenNames from '../../utils/ScreenNames';
-import CommunityApproval from '../../components/CommunityListItem/CommunityApproval';
 import {
   DeleteApi,
   GetApiWithToken,
@@ -266,6 +264,7 @@ const FollowedCommunityDetails = () => {
             images={[community?.image[0]?.image]}
             memberImages={community?.member_image}
             headerTitle={community?.name}
+            description={community?.description}
             followingBtnText={community?.follow ? 'Unfollow' : 'Follow'}
             postHandler={() => {
               newPostHandler(community?.id);

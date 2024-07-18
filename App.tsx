@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {StatusBar, Platform} from 'react-native';
 import {Provider} from 'react-redux';
-import {store, useAppDispatch, useAppSelector} from './src/redux/Store';
+import {store} from './src/redux/Store';
 import {NavigationContainer} from '@react-navigation/native';
 import Toast, {
   BaseToast,
@@ -17,6 +17,7 @@ import messaging from '@react-native-firebase/messaging';
 import {triggerNotification} from './src/utils/Method';
 import {notificationCounter} from './src/redux/TrackNumbers';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
+import {firebase} from '@react-native-firebase/firestore';
 
 const toastConfig = {
   success: (props: any) => (
@@ -80,7 +81,7 @@ function App(): React.ReactElement {
       .then(permissionGranted => {
         if (permissionGranted) {
           messaging().onMessage(async remoteMessage => {
-            console.log('Foreground message received!', remoteMessage);
+            // console.log('Foreground message received!', remoteMessage);
             store.dispatch(notificationCounter({notificationCount: 1}));
             triggerNotification(
               remoteMessage?.notification?.title,
@@ -95,6 +96,24 @@ function App(): React.ReactElement {
         console.log('err in push notification', err);
       });
   }, []);
+
+  React.useEffect(() => {
+    const unsubscribe = firebase
+      ?.firestore()
+      .collection('jwj_chats')
+      .doc(`1-${store?.getState().userDetails?.id}`)
+      .collection('messages')
+      ?.orderBy('createdAt', 'desc')
+      ?.limit(1)
+      ?.onSnapshot((snapshot: any) => {
+        // snapshot?._docs[0]?._data?.text &&
+        //   triggerNotification('New Message', snapshot?._docs[0]?._data?.text);
+      });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [store?.getState().userDetails?.id]);
 
   const requestUserPermission = async (): Promise<boolean> => {
     try {

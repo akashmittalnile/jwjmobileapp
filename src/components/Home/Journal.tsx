@@ -21,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import ScreenNames from '../../utils/ScreenNames';
 import FastImage from 'react-native-fast-image';
 import noDataFoundIcon from '../../assets/Icons/no-data-found.png';
+import {moodColorHandler} from '../../utils/Method';
 
 interface ToadyCommunityPorps {
   style?: ViewStyle;
@@ -112,7 +113,7 @@ const Journal: React.FC<ToadyCommunityPorps> = ({data, style}) => {
             <Text
               style={{
                 marginTop: responsiveHeight(0.5),
-                color: 'black',
+                color: moodColorHandler(item?.mood_name),
                 fontWeight: '400',
               }}>
               {item?.mood_name}

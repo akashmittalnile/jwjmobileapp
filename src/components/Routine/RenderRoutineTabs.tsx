@@ -22,9 +22,12 @@ const RenderRoutineTabs = ({data}: {data: any}) => {
             }}
             // routineType={item?.routinetype}
             routineType={
-              (item?.created_by == 'mySelf' || item?.createdBy == 'mySelf')
-                ? 'Private Rouitne'
-                : 'Shared Routine'
+              item?.created_by == 'mySelf' || item?.createdBy == 'mySelf'
+                ? 'Private Routine'
+                : `Shared Routine`
+            }
+            sharedBy={
+              item?.shared_by_user_name ? item?.shared_by_user_name : ''
             }
           />
         );

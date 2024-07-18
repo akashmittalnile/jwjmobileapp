@@ -257,7 +257,7 @@ const UploadPicture: React.FC<UploadPictureProps> = ({
                 fontWeight: '500',
                 color: 'gray',
               }}>
-              Click
+              Browse
             </Text>
           </TouchableOpacity>
         </View>

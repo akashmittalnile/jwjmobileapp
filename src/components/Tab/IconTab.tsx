@@ -1,8 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ViewStyle, ImageStyle, TouchableOpacity } from 'react-native';
-import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
-import { globalStyles } from '../../utils/constant';
-import { SvgXml } from 'react-native-svg';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  ImageStyle,
+  TouchableOpacity,
+  TextStyle,
+} from 'react-native';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
+import {globalStyles} from '../../utils/constant';
+import {SvgXml} from 'react-native-svg';
 import FastImage from 'react-native-fast-image';
 
 interface IconTabProps {
@@ -14,6 +26,8 @@ interface IconTabProps {
   disable?: boolean;
   onPress?: (text: string) => void;
   showPercentage?: boolean;
+  textStyle?: TextStyle;
+  percentageStyle?: TextStyle;
 }
 
 const IconTab: React.FC<IconTabProps> = ({
@@ -25,6 +39,8 @@ const IconTab: React.FC<IconTabProps> = ({
   disable = false,
   onPress,
   showPercentage = true,
+  textStyle,
+  percentageStyle,
 }) => {
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [isSvg, setIsSvg] = useState<boolean>(false);
@@ -33,9 +49,9 @@ const IconTab: React.FC<IconTabProps> = ({
     if (imageUri && imageUri.endsWith('.svg')) {
       setIsSvg(true);
       fetch(imageUri)
-        .then((response) => response.text())
-        .then((data) => setSvgContent(data))
-        .catch((error) => {
+        .then(response => response.text())
+        .then(data => setSvgContent(data))
+        .catch(error => {
           console.error('Error fetching SVG:', error);
           setSvgContent(null);
         });
@@ -60,7 +76,7 @@ const IconTab: React.FC<IconTabProps> = ({
       />
     ) : (
       <FastImage
-        source={{ uri: imageUri, priority: FastImage.priority.high }}
+        source={{uri: imageUri, priority: FastImage.priority.high}}
         style={{
           height: responsiveHeight(7),
           width: responsiveWidth(17),
@@ -76,11 +92,11 @@ const IconTab: React.FC<IconTabProps> = ({
         style={styles.touch}
         disabled={disable}
         onPress={clickHandler}>
-        <View style={{ height: responsiveHeight(7), width: responsiveWidth(17) }}>
+        <View style={{height: responsiveHeight(7), width: responsiveWidth(17)}}>
           {image}
         </View>
         {text && (
-          <Text numberOfLines={1} style={styles.text}>
+          <Text numberOfLines={1} style={[styles.text, textStyle]}>
             {text}
           </Text>
         )}
@@ -88,7 +104,8 @@ const IconTab: React.FC<IconTabProps> = ({
           <Text
             style={[
               styles.text,
-              { color: globalStyles.themeBlueText, fontWeight: '700' },
+              {color: globalStyles.themeBlueText, fontWeight: '700'},
+              percentageStyle,
             ]}>
             {`${Number(percentage)?.toFixed()}%`}
           </Text>
@@ -124,7 +141,6 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
-
 
 // /* eslint-disable react-native/no-inline-styles */
 // /* eslint-disable prettier/prettier */

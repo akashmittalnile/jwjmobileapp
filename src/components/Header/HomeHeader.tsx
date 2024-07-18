@@ -84,7 +84,7 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({
             </TouchableOpacity>
           </View>
           {isProfile && (
-            <View style={[styles.profile, {justifyContent: 'center'}]}>
+            <View style={[styles.profile, {justifyContent: 'center',}]}>
               <TouchableOpacity
                 style={[
                   styles.touch,
@@ -97,6 +97,7 @@ const HomeHeader: React.FC<HomeHeaderProps> = ({
                       width: responsiveHeight(5),
                       height: responsiveHeight(5),
                       borderRadius: responsiveHeight(5),
+                      backgroundColor: '#add8e6'
                     }}
                     source={{
                       uri: profileImage,

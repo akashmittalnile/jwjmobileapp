@@ -287,7 +287,7 @@ const DrawerNavigation = () => {
                   <TouchableOpacity
                     style={styles.touch}
                     onPress={() => {
-                      deepLinkHandler('https://www.youtube.com');
+                      deepLinkHandler('https://youtube.com/@journeywithjournals?si=15wGuO5Sb5pLF9Wy');
                     }}>
                     <Image
                       resizeMode="contain"

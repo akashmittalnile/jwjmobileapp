@@ -38,6 +38,7 @@ import {useNavigation} from '@react-navigation/native';
 import DeleteModal from '../Modal/DeleteModal';
 import moment from 'moment';
 import RNFetchBlob from 'rn-fetch-blob';
+import { moodColorHandler } from '../../utils/Method';
 
 interface EmojiTabProps {
   data?: any;
@@ -315,7 +316,7 @@ const EmojiTab: React.FC<EmojiTabProps> = ({
               style={{...styles.img, ...iconStyle}}
               resizeMode={FastImage.resizeMode.contain}
             />
-            <Text style={[styles.text]}>
+            <Text style={[styles.text, {color: moodColorHandler(emojiText)}]}>
               {emojiText}
             </Text>
           </View>

@@ -64,7 +64,7 @@ const NotificationTab: React.FC<NotificationTabProps> = ({
                 ? imageUri
                 : Image.resolveAssetSource(bellIcon)?.uri,
             }}
-            resizeMode="contain"
+            resizeMode="cover"
             style={{height: imageUri ? responsiveHeight(5) : responsiveHeight(3), width: imageUri ? responsiveHeight(5) : responsiveHeight(3)}}
           />
         </View>
@@ -84,14 +84,14 @@ const styes = StyleSheet.create({
     paddingBottom: 0,
     paddingTop: 0,
     width: '100%',
-    height: responsiveHeight(8),
+    // height: responsiveHeight(8),
     borderRadius: responsiveWidth(2),
     overflow: 'hidden',
   },
   touch: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: '100%',
+    // height: '100%',
     width: '100%',
     paddingHorizontal: responsiveWidth(2),
     paddingBottom: responsiveHeight(1),
@@ -110,7 +110,7 @@ const styes = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-around',
     paddingLeft: responsiveWidth(2),
-    height: '100%',
+    // height: '100%',
   },
   message: {
     fontSize: responsiveFontSize(1.6),

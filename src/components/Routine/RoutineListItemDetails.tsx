@@ -29,6 +29,7 @@ interface RoutineListItemDetailsProps {
   descriptionHeading?: string;
   description?: string;
   routineType?: string;
+  sharedBy?: string;
   onClick?: () => void;
   totalShare?: number;
   showShareButton?: boolean;
@@ -57,6 +58,7 @@ const RoutineListItemDetails: React.FC<RoutineListItemDetailsProps> = ({
   totalShare = 0,
   showShareButton = false,
   routineType = '',
+  sharedBy,
   editButtonHandler,
   shareButtonHandler,
   showSharedUserList = false,
@@ -114,7 +116,26 @@ const RoutineListItemDetails: React.FC<RoutineListItemDetailsProps> = ({
               <View>
                 <Text style={styles.textBold}>{headerText}</Text>
                 {routineType && (
-                  <Text style={styles.routineTypeText}>{routineType}</Text>
+                  <Text style={{...styles.routineTypeText, fontWeight: '500'}}>
+                    {routineType}
+                  </Text>
+                )}
+                {sharedBy && (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                    }}>
+                    <Text style={{...styles.routineTypeText}}>by</Text>
+                    <Text
+                      style={{
+                        ...styles.routineTypeText,
+                        color: 'black',
+                        marginLeft: responsiveWidth(1),
+                      }}>
+                      {sharedBy}
+                    </Text>
+                  </View>
                 )}
               </View>
             </View>
@@ -272,11 +293,10 @@ const styles = StyleSheet.create({
     marginLeft: responsiveWidth(2),
   },
   routineTypeText: {
-    marginTop: responsiveHeight(0.3),
+    marginTop: responsiveHeight(0),
     marginLeft: responsiveWidth(2),
     color: globalStyles.themeBlue,
     fontSize: responsiveFontSize(1.5),
-    fontWeight: '500',
   },
   text: {
     fontSize: responsiveFontSize(1.2),

@@ -4,7 +4,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
-  ScrollView,
   FlatList,
   ActivityIndicator,
 } from 'react-native';
@@ -18,6 +17,7 @@ import {
 import {globalStyles} from '../../utils/constant';
 import {useAppSelector} from '../../redux/Store';
 import FastImage from 'react-native-fast-image';
+import {moodColorHandler} from '../../utils/Method';
 
 interface TodayMoodProps {
   loader?: boolean;
@@ -53,7 +53,9 @@ const TodayMood: React.FC<TodayMoodProps> = ({
           style={styles.img}
         />
 
-        <Text style={styles.text}>{item?.name}</Text>
+        <Text style={{...styles.text, color: moodColorHandler(item?.name)}}>
+          {item?.name}
+        </Text>
       </TouchableOpacity>
     );
   };

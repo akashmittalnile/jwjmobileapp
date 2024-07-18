@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import React from 'react';
-import Container from '../../components/Container/Container';
 import {
   responsiveFontSize,
   responsiveHeight,
@@ -17,8 +16,6 @@ import {
 } from 'react-native-responsive-dimensions';
 import BorderBtn from '../../components/Button/BorderBtn';
 import {globalStyles} from '../../utils/constant';
-import ContactTabContainer from '../../components/Contact/ContactTabContainer';
-import ContactTab from '../../components/Contact/ContactTab';
 import CustomCalendar from '../../components/Calendar/CustomCalendar';
 import {useNavigation} from '@react-navigation/native';
 import ScreenNames from '../../utils/ScreenNames';
@@ -29,6 +26,7 @@ import Toast from 'react-native-toast-message';
 import ContactMainTab from '../../components/Contact/ContactMainTab';
 import moment from 'moment';
 import Header from '../../components/Header/Header';
+import BorderLessBtn from '../../components/Button/BorderLessBtn';
 
 let pagination = {
   currentPage: 1,
@@ -42,12 +40,6 @@ const Contact = () => {
   const token = useAppSelector(state => state.auth.token);
   const [modal, setModal] = React.useState<boolean>(false);
   const [date, setDate] = React.useState<string>(moment().format('YYYY-MM-DD'));
-  const [statusCompletedAdminTab, setStatusCompletedAdminTab] =
-    React.useState<boolean>(false);
-  const [statusProgressAdminTab, setStatusProgressAdminTab] =
-    React.useState<boolean>(false);
-  const [statusPendingAdminTab, setStatusPendingAdminTab] =
-    React.useState<boolean>(false);
   const [showSkeleton, setShowSkeleton] = React.useState<boolean>(false);
   const [data, setData] = React.useState<any[]>([]);
   const [paginatonLoader, setPaginationLoader] = React.useState<boolean>(false);
@@ -66,7 +58,7 @@ const Contact = () => {
       loader: false,
     };
     setDate(moment().format('YYYY-MM-DD'));
-    getQueryList(moment().format('YYYY-MM-DD'));
+    getQueryList(`?date=${moment().format('YYYY-MM-DD')}`);
   }, [reload]);
 
   const getQueryList = async (param: string) => {
@@ -105,17 +97,56 @@ const Contact = () => {
     setModal(true);
   };
 
+  const clearFilter = async () => {
+    setshouldRefresh(true);
+    pagination.currentPage = 1;
+    pagination.lastPage = 1;
+    pagination.loader = false;
+    setDate('');
+    getQueryList('');
+  };
+
   const upperSection = (
     <View style={styles.add}>
-      <TouchableOpacity style={styles.touch} onPress={calendarhandler}>
-        <Image
-          source={require('../../assets/Icons/calendar-blue.png')}
-          resizeMode="contain"
-          style={styles.icon}
-        />
-        {/* <Text style={styles.addText}>{date?.split('-').reverse().join('-')}</Text> */}
-        <Text style={styles.addText}>{moment(date)?.format('MM-DD-YYYY')}</Text>
-      </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderRadius: responsiveWidth(2),
+          ...globalStyles.shadowStyle,
+          borderWidth: responsiveWidth(0.23),
+          borderColor: globalStyles.lightGray,
+        }}>
+        <TouchableOpacity style={styles.touch} onPress={calendarhandler}>
+          <Image
+            source={require('../../assets/Icons/calendar-blue.png')}
+            resizeMode="contain"
+            style={styles.icon}
+          />
+          {/* <Text style={styles.addText}>{date?.split('-').reverse().join('-')}</Text> */}
+          <Text style={styles.addText}>
+            {date ? moment(date)?.format('MM-DD-YYYY') : 'MM-DD-YYYY'}
+          </Text>
+        </TouchableOpacity>
+        <View
+          style={{
+            width: '25%',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <BorderLessBtn
+            buttonText="Clear filter"
+            onClick={clearFilter}
+            containerStyle={{
+              width: responsiveWidth(17),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          />
+          {/* <Text style={{fontSize: responsiveFontSize(1.6), fontWeight: '400', color: globalStyles.themeBlue}}>Clear Filter</Text> */}
+        </View>
+      </View>
       <BorderBtn
         buttonText="+"
         onClick={addQueryHandler}
@@ -240,23 +271,19 @@ const styles = StyleSheet.create({
     width: responsiveHeight(2),
   },
   touch: {
-    flex: 5,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
     marginRight: responsiveWidth(1.5),
     paddingHorizontal: responsiveWidth(3),
-    borderRadius: responsiveWidth(2),
-    ...globalStyles.shadowStyle,
-    borderWidth: responsiveWidth(0.23),
-    borderColor: globalStyles.lightGray,
+    width: '57%',
   },
   addText: {
     marginLeft: responsiveWidth(2),
     color: globalStyles.midGray,
   },
   buttonStyle: {
-    flex: 1,
+    width: '15%',
   },
   buttonText: {
     fontSize: responsiveFontSize(3),

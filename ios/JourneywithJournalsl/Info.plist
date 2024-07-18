@@ -22,6 +22,8 @@
 <string>App wants to access your downloads folder</string>
 <key>NSDocumentsFolderUsageDescription</key>
 <string>We need access to the documents folder to save downloaded PDFs.</string>
+<key>SKPaymentQueueStorePassword</key>
+<string>YES</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

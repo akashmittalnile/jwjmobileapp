@@ -123,7 +123,6 @@ const EditProfile = () => {
           user_name: data?.userName,
         };
       }
-      console.log(data1);
       // if (data?.file) {
       //   data1 = {
       //     name: data?.name,

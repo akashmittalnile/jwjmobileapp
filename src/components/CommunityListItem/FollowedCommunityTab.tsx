@@ -30,6 +30,7 @@ interface FollowedCommunityTabProps {
   id?: number;
   profilePic?: string;
   headerTitle?: string;
+  description?: string;
   totleFollowers?: number;
   style?: ViewStyle;
   postHandler: () => void;
@@ -56,6 +57,7 @@ const FollowedCommunityTab: React.FC<FollowedCommunityTabProps> = ({
   id,
   profilePic = '',
   headerTitle = '',
+  description = '',
   totleFollowers = 0,
   style,
   postHandler,
@@ -112,7 +114,7 @@ const FollowedCommunityTab: React.FC<FollowedCommunityTabProps> = ({
               [ScreenNames.Home]: !reload.Home,
             }),
           );
-          unfollowHandlerCallback && unfollowHandlerCallback()
+          unfollowHandlerCallback && unfollowHandlerCallback();
         }
         Toast.show({
           type: response?.data?.status ? 'success' : 'error',
@@ -138,7 +140,12 @@ const FollowedCommunityTab: React.FC<FollowedCommunityTabProps> = ({
         style={[styles.touch]}
         onPress={_onClickTab}
         activeOpacity={1}>
-        <View style={styles.headerContainer}>
+        <View
+          style={{
+            ...styles.headerContainer,
+            borderBottomWidth: description ? 0 : responsiveWidth(0.1),
+            borderBottomColor: globalStyles.lightGray,
+          }}>
           <View
             style={{
               flex: 1,
@@ -221,7 +228,24 @@ const FollowedCommunityTab: React.FC<FollowedCommunityTabProps> = ({
             )}
           </View>
         </View>
-
+        {description && (
+          <View
+            style={{
+              paddingBottom: responsiveHeight(1),
+              borderBottomWidth: responsiveWidth(0.1),
+              borderBottomColor: globalStyles.lightGray,
+            }}>
+            <Text
+              style={{
+                fontSize: responsiveFontSize(1.5),
+                color: 'black',
+                fontWeight: '400',
+                paddingHorizontal: '3%',
+              }}>
+              {description}
+            </Text>
+          </View>
+        )}
         {/* followers */}
         <View style={styles.tabMembersContainer}>
           <TouchableOpacity
@@ -330,8 +354,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: '3%',
     paddingVertical: responsiveHeight(1.2),
-    borderBottomWidth: responsiveWidth(0.1),
-    borderBottomColor: globalStyles.lightGray,
+    // borderBottomWidth: responsiveWidth(0.1),
+    // borderBottomColor: globalStyles.lightGray,
   },
   titleSignContainer: {
     justifyContent: 'center',
@@ -353,7 +377,7 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: responsiveFontSize(1.7),
     letterSpacing: 0.8,
-    fontWeight: '400',
+    fontWeight: '500',
   },
   headerButtonsContainer: {
     flexDirection: 'row',

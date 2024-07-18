@@ -21,6 +21,7 @@ interface RoutineListItemProps {
   description?: string;
   onClick?: () => void;
   routineType?: string;
+  sharedBy?: string;
 }
 
 const RoutineListItem: React.FC<RoutineListItemProps> = ({
@@ -31,6 +32,7 @@ const RoutineListItem: React.FC<RoutineListItemProps> = ({
   description,
   onClick,
   routineType = '',
+  sharedBy,
 }) => {
   const [svgContent, setSvgContent] = useState<string | null>(null);
   const [isSvg, setIsSvg] = useState<boolean>(false);
@@ -154,7 +156,23 @@ const RoutineListItem: React.FC<RoutineListItemProps> = ({
             <View>
               <Text style={styles.textBold}>{headerText}</Text>
               {routineType && (
-                <Text style={styles.routineTypeText}>{routineType}</Text>
+                <Text style={{...styles.routineTypeText, fontWeight: '500'}}>
+                  {routineType}
+                </Text>
+              )}
+              {sharedBy && (
+                <View
+                  style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
+                  <Text style={{...styles.routineTypeText}}>by</Text>
+                  <Text
+                    style={{
+                      ...styles.routineTypeText,
+                      color: 'black',
+                      marginLeft: responsiveWidth(1),
+                    }}>
+                    {sharedBy}
+                  </Text>
+                </View>
               )}
             </View>
           </View>
@@ -244,7 +262,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
   },
   routineTypeText: {
-    marginTop: responsiveHeight(0.3),
+    marginTop: responsiveHeight(0),
     marginLeft: responsiveWidth(2),
     color: globalStyles.themeBlue,
     fontSize: responsiveFontSize(1.5),

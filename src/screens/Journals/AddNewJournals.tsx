@@ -35,12 +35,15 @@ import Tag from '../../components/Tag/Tag';
 import {endPoint} from '../../services/Service';
 import Toast from 'react-native-toast-message';
 import {reloadHandler} from '../../redux/ReloadScreen';
+import {moodColorHandler} from '../../utils/Method';
 
 const textButtonIconPath = Image.resolveAssetSource(textButtonIcon).uri;
 const micButtonIconPath = Image.resolveAssetSource(micButtonIcon).uri;
 const _micButtonIconPath = Image.resolveAssetSource(_micButtonIcon).uri;
 
 type AddNewJournalsRouteProp = RouteProp<RootStackParamList, 'AddNewJournals'>;
+
+let shouldKeyboardOffWithTags: any = true;
 
 const AddNewJournals = () => {
   const navigation = useNavigation();
@@ -84,6 +87,10 @@ const AddNewJournals = () => {
     } else if (params?.mood) {
       setMood(params?.mood);
     }
+
+    return () => {
+      shouldKeyboardOffWithTags = null;
+    };
   }, [params?.mood, reloadJournal]);
   // console.log(criteria);
   const moodHandler = (mood_id: string) => {
@@ -105,6 +112,7 @@ const AddNewJournals = () => {
       disableButton={loader}
       // disbaleImage={mood === item?.id ? false : true}
       selected={mood === item?.id ? true : false}
+      textStyle={{color: moodColorHandler(item.name)}}
     />
   ));
 
@@ -257,12 +265,21 @@ const AddNewJournals = () => {
       setLoader(false);
     }
   };
+
+  const onTagFocus = () => {
+    shouldKeyboardOffWithTags = false;
+  };
+  const onTagBlur = () => {
+    shouldKeyboardOffWithTags = true;
+  };
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       onTouchEnd={() => {
-        Keyboard?.isVisible() && Keyboard?.dismiss();
+        Keyboard?.isVisible() &&
+          shouldKeyboardOffWithTags &&
+          Keyboard?.dismiss();
       }}>
       <>
         <View style={styles.container}>
@@ -394,6 +411,11 @@ const AddNewJournals = () => {
                   setCriteria(tags);
                   err.criteria && errStateHandler({criteria: false});
                 }}
+                onSubmitEditing={() => {
+                  Keyboard.dismiss();
+                }}
+                onTagFocus={onTagFocus}
+                onTagBlur={onTagBlur}
               />
               <View style={styles.saveButtonContainer}>
                 <BorderBtn

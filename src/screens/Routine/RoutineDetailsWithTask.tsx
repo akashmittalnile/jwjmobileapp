@@ -110,7 +110,7 @@ const RoutineDetailsWithTask = () => {
       setShowDeletemodal(true);
     }
   };
-  console.log(params, data?.createdBy);
+  console.log('data', data);
   return (
     <>
       <Container
@@ -126,7 +126,12 @@ const RoutineDetailsWithTask = () => {
           description={data?.description}
           // routineType={data?.routinetype}
           routineType={
-            data?.created_by === 'shared' ? 'Shared Routine' : 'Private Rouitne'
+            data?.created_by == 'mySelf' || data?.createdBy == 'mySelf'
+              ? 'Private Routine'
+              : `Shared Routine`
+          }
+          sharedBy={
+            data?.['0']?.shared_user_name ? data?.['0']?.shared_user_name : ''
           }
           totalShare={data?.sharingList?.length}
           showShareButton={true}

@@ -20,7 +20,6 @@ import {
 } from 'react-native-responsive-dimensions';
 import Voice from '@react-native-voice/voice';
 import {globalStyles} from '../../utils/constant';
-import BorderBtn from '../Button/BorderBtn';
 import AnimatedCircle from '../AnimatedCircle/AnimatedCircle';
 
 interface TodayMoodProps {
@@ -40,10 +39,7 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
   value,
 }) => {
   const [recognizedText, setRecognizedText] = React.useState('');
-  const [oldText, setOldText] = React.useState<string>('');
   const [isListening, setIsListening] = React.useState<boolean>(false);
-  const [showFinishButton, setShowFinishButton] =
-    React.useState<boolean>(false);
 
   React.useEffect(() => {
     myText = value ? value : '';
@@ -60,6 +56,7 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
     // Voice.onSpeechEnd = onSpeechEnd;
     Voice.onSpeechError = onSpeechError;
     Voice.onSpeechPartialResults = onSpeechResults;
+    Voice.onSpeechEnd = onSpeechEnd
 
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
@@ -74,12 +71,12 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
         PermissionsAndroid?.PERMISSIONS.RECORD_AUDIO,
       );
       if (result === 'granted') {
-        Voice.start('en-US', {partialResults: false});
+        Voice.start('en-US', {partialResults: true});
       } else {
         console.log('failed', {result});
       }
     } else {
-      Voice.start('en-US');
+      Voice.start('en-US', {partialResults: true});
     }
   };
 
@@ -91,9 +88,10 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
     // console.log('Speech recognized');
   };
 
-  // const onSpeechEnd = () => {
-  //   setIsListening(false);
-  // };
+  const onSpeechEnd = () => {
+    // console.log('band ho gya')
+    setIsListening(false)
+  };
 
   const onSpeechError = (error: any) => {
     // console.error('Speech error: ', error);
@@ -117,7 +115,7 @@ const SpeakModal: React.FC<TodayMoodProps> = ({
   const stopListening = async () => {
     setTimeout(() => {
       myText = recognizedText;
-    }, 100);
+    }, 120);
     setIsListening(false);
     try {
       await Voice.stop();

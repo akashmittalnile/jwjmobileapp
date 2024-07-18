@@ -25,7 +25,6 @@ import {useAppDispatch, useAppSelector} from '../../redux/Store';
 import {authHandler} from '../../redux/Auth';
 import Toast from 'react-native-toast-message';
 import messaging from '@react-native-firebase/messaging';
-import {firebase} from '@react-native-firebase/firestore';
 import {userDetailsHandler} from '../../redux/UserDetails';
 
 const SignIn = () => {
@@ -129,7 +128,7 @@ const SignIn = () => {
     }
   };
   return (
-    <KeyboardAvoidingViewWrapper>
+    <KeyboardAvoidingViewWrapper scrollViewContentContainerStyle={{paddingBottom: responsiveHeight(2)}}>
       <View style={styles.container}>
         <BgImage />
         <Header
@@ -213,7 +212,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    height: responsiveHeight(100),
     width: responsiveWidth(100),
     alignItems: 'center',
     backgroundColor: 'white',

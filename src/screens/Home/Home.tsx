@@ -45,8 +45,7 @@ import SkeletonContainer from '../../components/Skeleton/SkeletonContainer';
 import {notificationCounter, numberHandler} from '../../redux/TrackNumbers';
 import TodayMood from '../../components/Modal/TodayMood';
 import {err} from 'react-native-svg';
-
-
+import {resolveProfileImage} from '../../utils/Method';
 
 interface HomeData {
   mood: [{id: string; name: string; logo: string}];
@@ -65,6 +64,8 @@ interface HomeData {
   mood_calender: {}[] | undefined;
   my_routine: {}[] | undefined;
 }
+
+const text = 'How Are You Feeling Today?';
 
 const Home = () => {
   const focused = useIsFocused();
@@ -177,6 +178,7 @@ const Home = () => {
           user_name,
           country_flag,
           admin,
+          gender,
         } = userDetails?.data?.data;
         dispatch(
           userDetailsHandler({
@@ -185,7 +187,9 @@ const Home = () => {
             email: email,
             countryCode: country_code,
             mobile: mobile,
-            profileImage: profile_image,
+            profileImage: profile_image
+              ? profile_image
+              : resolveProfileImage(gender),
             userName: user_name,
             cca2: country_flag,
             adminProfileImage: admin?.profile,
@@ -230,7 +234,7 @@ const Home = () => {
 
   const todayMoodHandler = async (mood_id: string) => {
     setMoodLoader(true);
-    // dispatch(userDetailsHandler({homeScreenLoader: true}));
+    dispatch(userDetailsHandler({homeScreenLoader: true}));
     try {
       const response = await PostApiWithToken(
         endPoint.moodCapture,
@@ -255,7 +259,7 @@ const Home = () => {
       console.log('err in mood updating home', err.message);
     } finally {
       setMoodLoader(false);
-      // dispatch(userDetailsHandler({homeScreenLoader: false}));
+      dispatch(userDetailsHandler({homeScreenLoader: false}));
     }
   };
 
@@ -292,8 +296,8 @@ const Home = () => {
               <View
                 style={{
                   ...styles.textInputContainer,
-                  // width: todayMood ? responsiveWidth(95) : responsiveWidth(77),
-                  width: responsiveWidth(95),
+                  width: todayMood ? responsiveWidth(95) : responsiveWidth(77),
+                  // width: responsiveWidth(95),
                 }}>
                 <TextInput
                   style={styles.searchInput}
@@ -322,10 +326,10 @@ const Home = () => {
                     <Journal
                       data={homeData?.my_journal}
                       style={{
-                        // width: todayMood
-                        //   ? responsiveWidth(95)
-                        //   : responsiveWidth(77),
-                        width: responsiveWidth(95),
+                        width: todayMood
+                          ? responsiveWidth(95)
+                          : responsiveWidth(77),
+                        // width: responsiveWidth(95),
                       }}
                     />
                   )}
@@ -338,10 +342,10 @@ const Home = () => {
                           item?.follow || (item?.my_community && item),
                       )}
                       style={{
-                        // width: todayMood
-                        //   ? responsiveWidth(95)
-                        //   : responsiveWidth(77),
-                        width: responsiveWidth(95),
+                        width: todayMood
+                          ? responsiveWidth(95)
+                          : responsiveWidth(77),
+                        // width: responsiveWidth(95),
                       }}
                     />
                   )}
@@ -353,10 +357,10 @@ const Home = () => {
                         ...styles.wrapper,
                         paddingTop: responsiveHeight(1),
                         paddingBottom: responsiveHeight(1),
-                        // width: todayMood
-                        //   ? responsiveWidth(95)
-                        //   : responsiveWidth(77),
-                        width: responsiveWidth(95),
+                        width: todayMood
+                          ? responsiveWidth(95)
+                          : responsiveWidth(77),
+                        // width: responsiveWidth(95),
                       }}>
                       <View style={styles.header}>
                         <View>
@@ -403,10 +407,10 @@ const Home = () => {
                               source={require('../../assets/Icons/no-data-found.png')}
                               style={{
                                 ...styles.noData,
-                                // width: todayMood
-                                //   ? responsiveWidth(95)
-                                //   : responsiveWidth(77),
-                                width: responsiveWidth(95),
+                                width: todayMood
+                                  ? responsiveWidth(95)
+                                  : responsiveWidth(77),
+                                // width: responsiveWidth(95),
                               }}
                               resizeMode="contain"
                             />
@@ -443,8 +447,9 @@ const Home = () => {
               <Wrapper
                 containerStyle={{
                   ...styles.wrapper,
-                  // width: todayMood ? responsiveWidth(95) : responsiveWidth(77),
-                  width: responsiveWidth(95),
+                  marginBottom: responsiveHeight(5),
+                  width: todayMood ? responsiveWidth(95) : responsiveWidth(77),
+                  // width: responsiveWidth(95),
                 }}>
                 <MoodCalendar dateHandler={dateHandler} value={_date} />
               </Wrapper>
@@ -456,10 +461,10 @@ const Home = () => {
                     ...styles.wrapper,
                     flexDirection: 'row',
                     alignItems: 'center',
-                    // width: todayMood
-                    //   ? responsiveWidth(95)
-                    //   : responsiveWidth(77),
-                    width: responsiveWidth(95),
+                    width: todayMood
+                      ? responsiveWidth(95)
+                      : responsiveWidth(77),
+                    // width: responsiveWidth(95),
                   }}>
                   <View style={{flex: 3, paddingLeft: responsiveWidth(5)}}>
                     <Text
@@ -537,7 +542,7 @@ const Home = () => {
           </ScrollView>
 
           {/* Emoji */}
-          {/* {!todayMood && (
+          {!todayMood && (
             <View style={styles.moodContainer}>
               <View style={styles.moodTextContainer}>
                 {[...text].map((item, index) => (
@@ -547,23 +552,27 @@ const Home = () => {
                 ))}
               </View>
               <View style={styles.emojiContainer}>
-                {moodData?.map((item, index) => (
-                  <Emoji
-                    key={item?.id}
-                    text={item.name}
-                    imageUri={item.logo}
-                    style={{marginTop: responsiveHeight(2)}}
-                    onPress={() => {
-                      todayMoodHandler(item?.id);
-                    }}
-                  />
-                ))}
+                <ScrollView
+                  contentContainerStyle={{paddingBottom: responsiveHeight(22)}}
+                  bounces={false}>
+                  {moodData?.map((item, index) => (
+                    <Emoji
+                      key={item?.id}
+                      text={item.name}
+                      imageUri={item.logo}
+                      style={{marginTop: responsiveHeight(1.4)}}
+                      onPress={() => {
+                        todayMoodHandler(item?.id);
+                      }}
+                    />
+                  ))}
+                </ScrollView>
               </View>
             </View>
-          )} */}
+          )}
         </View>
       </View>
-      <Modal animationType="slide" transparent={true} visible={!todayMood}>
+      {/* <Modal animationType="slide" transparent={true} visible={!todayMood}>
         <TodayMood
           loader={moodLoader}
           onPress={todayMoodHandler}
@@ -571,7 +580,7 @@ const Home = () => {
             setTodayMood(true);
           }}
         />
-      </Modal>
+      </Modal> */}
     </>
   );
 };
@@ -648,6 +657,7 @@ const styles = StyleSheet.create({
   },
   emojiContainer: {
     marginTop: responsiveHeight(22),
+    flex: 1,
   },
   TodayEntriesContainer: {
     // marginBottom: responsiveHeight(3)

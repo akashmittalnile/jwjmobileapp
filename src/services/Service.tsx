@@ -76,7 +76,6 @@ export const endPoint = {
 };
 
 const loginHandler = async (message: string) => {
-  console.log('nile message', message);
   try {
     Toast.show({
       type: 'error',

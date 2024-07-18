@@ -1,8 +1,6 @@
 import {
   View,
   StyleSheet,
-  TouchableOpacity,
-  Image,
   TextInput,
   Keyboard,
   ViewStyle,
@@ -15,7 +13,6 @@ import {
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import {globalStyles} from '../../utils/constant';
-import BorderBtn from '../Button/BorderBtn';
 import IconButton from '../Button/IconButton';
 
 interface FormatInputProps {
@@ -83,14 +80,6 @@ const FormatInput: React.FC<FormatInputProps> = ({
       setText(value);
     }
   }, [value]);
-
-  const fontStyleHandler = (style: object) => {
-    setFontStyle({...initialValue, ...style});
-  };
-
-  const fontAlignmentHandler = (style: object) => {
-    setFontAlignment({...initialValue2, ...style});
-  };
 
   const selectedButtonHandler = (text: string) => {
     if (!editable) {

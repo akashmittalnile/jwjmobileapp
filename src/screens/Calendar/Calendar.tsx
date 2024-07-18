@@ -19,6 +19,7 @@ import SvgUri from 'react-native-svg-uri';
 import ScreenNames from '../../utils/ScreenNames';
 import ImageSlider from '../../components/Slider/ImageSlider';
 import moment from 'moment';
+import {moodColorHandler} from '../../utils/Method';
 
 type CalendarRouteParams = RouteProp<RootStackParamList, 'Calendar'>;
 
@@ -33,6 +34,7 @@ interface CategoryTabProps {
   sliderImages?: string[];
   date: string;
   routineType?: string;
+  sharedBy?: string;
 }
 
 const CategoryTab: React.FC<CategoryTabProps> = ({
@@ -46,6 +48,7 @@ const CategoryTab: React.FC<CategoryTabProps> = ({
   sliderImages,
   date,
   routineType,
+  sharedBy,
 }) => {
   const temp = imageUri?.split('.');
   let imageType;
@@ -111,7 +114,13 @@ const CategoryTab: React.FC<CategoryTabProps> = ({
             </View>
           )}
           <View>
-            <Text style={styles.categoryTabHeaderText}>{type}</Text>
+            <Text
+              style={{
+                ...styles.categoryTabHeaderText,
+                color: categoryName ? moodColorHandler(type) : 'black',
+              }}>
+              {type}
+            </Text>
             {!categoryName && (
               <Text
                 style={{
@@ -122,6 +131,20 @@ const CategoryTab: React.FC<CategoryTabProps> = ({
                 }}>
                 {routineType}
               </Text>
+            )}
+            {sharedBy && (
+              <View
+                style={{flexDirection: 'row', justifyContent: 'flex-start',paddingLeft: responsiveWidth(4)}}>
+                <Text style={{...styles.routineTypeText}}>by</Text>
+                <Text
+                  style={{
+                    ...styles.routineTypeText,
+                    color: 'black',
+                    marginLeft: responsiveWidth(1),
+                  }}>
+                  {sharedBy}
+                </Text>
+              </View>
             )}
           </View>
           <Text
@@ -297,6 +320,7 @@ const Calendar = () => {
                     ? 'Private Routine'
                     : 'Shared Routine'
                 }
+                sharedBy={item?.shared_by_user_name}
               />
             ))}
           </>
@@ -464,5 +488,12 @@ const styles = StyleSheet.create({
     fontSize: responsiveFontSize(1.6),
     width: '100%',
     color: 'black',
+  },
+  routineTypeText: {
+    marginTop: responsiveHeight(0),
+    // marginLeft: responsiveWidth(2),
+    color: globalStyles.themeBlue,
+    fontSize: responsiveFontSize(1.5),
+    fontWeight: '500',
   },
 });

@@ -92,7 +92,7 @@ const SharedRoutine = () => {
             }}
             // routineType={item?.routinetype}
             routineType={
-              item?.created_by === 'mySelf' ? 'Private Rouitne' : 'Shared Routine'
+              item?.created_by === 'mySelf' ? 'Private Routine' : 'Shared Routine'
             }
           />
         ))

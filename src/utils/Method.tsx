@@ -1,8 +1,10 @@
-import {PermissionsAndroid, Platform} from 'react-native';
+import {Image, PermissionsAndroid, Platform} from 'react-native';
 import {store} from '../redux/Store';
 import {authHandler} from '../redux/Auth';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
+import maleIcon from '../assets/Icons/user.png';
+import femaleIcon from '../assets/Icons/girl.png';
 
 export const isValidDateHandler = (dateString: string) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
@@ -86,6 +88,7 @@ export const triggerNotification = async (
   scheduleTime: string = '',
 ) => {
   try {
+    console.log('1');
     if (Platform.OS === 'android') {
       const result = await PermissionsAndroid?.request(
         PermissionsAndroid?.PERMISSIONS?.POST_NOTIFICATIONS,
@@ -146,7 +149,7 @@ export const triggerNotification = async (
 
 export const findTenure = (timePeriod: string) => {
   if (!timePeriod) {
-    return ''
+    return '';
   }
   if (timePeriod?.toLowerCase() === 'monthly') {
     return '/Month';
@@ -154,5 +157,34 @@ export const findTenure = (timePeriod: string) => {
     return '/Year';
   } else {
     return ' One-Time';
+  }
+};
+
+export const moodColorHandler = (value: string | undefined) => {
+  const _value = value?.toLowerCase();
+  if (_value == 'happy') {
+    return '#FFD800';
+  } else if (_value == 'sad') {
+    return 'gray';
+  } else if (_value == 'angry' || _value == 'anger') {
+    return 'red';
+  } else if (_value == 'peaceful') {
+    return '#4B9CD3';
+  } else if (_value == 'blessed') {
+    return 'green';
+  } else if (_value == 'stressed') {
+    return '#A52A2A';
+  } else if (_value == 'overwhelmed') {
+    return '#48496C';
+  }
+
+  return '#E0B8AC';
+};
+
+export const resolveProfileImage = (gender: string) => {
+  if (gender?.toLowerCase() === 'male') {
+    return Image.resolveAssetSource(maleIcon).uri;
+  } else if (gender?.toLowerCase() === 'female') {
+    return Image.resolveAssetSource(femaleIcon).uri;
   }
 };

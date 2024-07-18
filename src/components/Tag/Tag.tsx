@@ -28,6 +28,9 @@ interface TagProps {
   tagHandler?: (tags: {}[], isValid?: boolean) => void;
   style?: ViewStyle;
   disableButtons?: boolean;
+  onSubmitEditing?: () => void;
+  onTagBlur?: () => void;
+  onTagFocus?: () => void;
 }
 
 const Tag: React.FC<TagProps> = ({
@@ -36,6 +39,9 @@ const Tag: React.FC<TagProps> = ({
   disableButtons,
   value,
   edit = false,
+  onSubmitEditing,
+  onTagBlur,
+  onTagFocus,
 }) => {
   const token = useAppSelector(state => state.auth.token);
   const [criteria, setCriteria] = React.useState<
@@ -99,6 +105,7 @@ const Tag: React.FC<TagProps> = ({
   };
 
   const getTagsOnFocus = async () => {
+    onTagFocus && onTagFocus();
     try {
       if (criteria.length === 0) {
         setLoader(true);
@@ -183,6 +190,9 @@ const Tag: React.FC<TagProps> = ({
     setCriteria(temp);
   };
 
+  const submitHandler = () => {
+    onSubmitEditing && onSubmitEditing();
+  };
   return (
     <Wrapper containerStyle={{...styles.wrapper, ...style}}>
       <TextInput
@@ -194,12 +204,11 @@ const Tag: React.FC<TagProps> = ({
         onChangeText={handleChange}
         onFocus={getTagsOnFocus}
         onBlur={() => {
-          setTempList([]);
+          onTagBlur && onTagBlur();
+          // setTempList([]);
         }}
         blurOnSubmit={true}
-        onSubmitEditing={() => {
-          Keyboard.dismiss();
-        }}
+        onSubmitEditing={submitHandler}
         // onKeyPress={value => {
         //   customCriteriaHandler(value);
         // }}
@@ -210,7 +219,10 @@ const Tag: React.FC<TagProps> = ({
         {criteria.length > 0 &&
           criteria?.map((item: any, index: number) => (
             <View
-              style={{position: 'relative', marginBottom: responsiveHeight(1.5)}}
+              style={{
+                position: 'relative',
+                marginBottom: responsiveHeight(1.5),
+              }}
               key={item.id + item?.name + index}>
               <View style={styles.tag}>
                 <Text style={styles.tagText}>{item?.name}</Text>
@@ -291,7 +303,7 @@ const styles = StyleSheet.create({
     minHeight: responsiveHeight(5),
     borderBottomWidth: responsiveHeight(0.1),
     borderBottomColor: globalStyles.lightGray,
-    color: 'black'
+    color: 'black',
   },
   criteriaText: {
     paddingLeft: responsiveWidth(3),

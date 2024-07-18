@@ -5,7 +5,6 @@ import {
   Platform,
   StyleSheet,
   ViewStyle,
-  NativeModules,
 } from 'react-native';
 import React, {ReactNode} from 'react';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
@@ -13,19 +12,27 @@ import {responsiveHeight} from 'react-native-responsive-dimensions';
 interface KeyboardAvoidingViewWrapperProps {
   children: ReactNode;
   KeyboardAvoidingViewStyle?: ViewStyle;
+  scrollViewContentContainerStyle?: ViewStyle;
 }
 
 const KeyboardAvoidingViewWrapper: React.FC<
   KeyboardAvoidingViewWrapperProps
-> = ({children, KeyboardAvoidingViewStyle}) => {
+> = ({
+  children,
+  KeyboardAvoidingViewStyle,
+  scrollViewContentContainerStyle,
+}) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={[
-        styles.keyboardAvoidingView,
-        KeyboardAvoidingViewStyle,
-      ]}>
-      <ScrollView bounces={false} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: responsiveHeight(10)}}>
+      style={[styles.keyboardAvoidingView, KeyboardAvoidingViewStyle]}>
+      <ScrollView
+        bounces={false}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: responsiveHeight(10),
+          ...scrollViewContentContainerStyle,
+        }}>
         {children}
       </ScrollView>
     </KeyboardAvoidingView>

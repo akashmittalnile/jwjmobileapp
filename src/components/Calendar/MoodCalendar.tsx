@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ViewStyle,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import React, {useEffect} from 'react';
 import {Calendar} from 'react-native-calendars';
@@ -21,12 +22,15 @@ import {useAppSelector} from '../../redux/Store';
 import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import ScreenNames from '../../utils/ScreenNames';
+import {moodColorHandler} from '../../utils/Method';
 
 interface MoodCalendarProps {
   containerStyle?: ViewStyle;
   dateHandler?: (date: string) => void;
   value?: string;
 }
+
+let counter: any = null;
 
 const MoodCalendar: React.FC<MoodCalendarProps> = ({
   containerStyle,
@@ -46,11 +50,15 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
   const [currentYear, setCurrentYear] = React.useState<string>(
     moment().format('YYYY-MM-DD').split('-')[0],
   );
-
+  const [showModal, setShowModal] = React.useState<boolean>(false);
 
   useEffect(() => {
     value && setDate(value);
     getMoodData(currentMonth, currentYear);
+
+    return () => {
+      counter = null;
+    };
   }, [currentMonth, reload]);
 
   const getMoodData = async (month: number, year: string) => {
@@ -87,16 +95,34 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
     // }
   };
 
-  const colorHandler = (value: string) => {
-    if (value == 'happy') {
-      return '#FFD800';
-    } else if (value == 'sad') {
-      return '#6CB4EE';
-    } else if (value == 'anger') {
-      return 'red';
-    }
-    return 'gray';
+  // const colorHandler = (value: string) => {
+  //   if (value == 'happy') {
+  //     return '#FFD800';
+  //   } else if (value == 'sad') {
+  //     return '#6CB4EE';
+  //   } else if (value == 'anger') {
+  //     return 'red';
+  //   }
+  //   return 'gray';
+  // };
+
+  const showModalHandler = () => {
+    counter = setTimeout(() => {
+      counter = null;
+      setShowModal(true);
+    }, 300);
   };
+
+  const disableModal = (a: any, b: any) => {
+    if (!counter) {
+      setShowModal(false);
+      return;
+    } else {
+      clearTimeout(counter);
+      _dateHandler(a, b);
+    }
+  };
+
   const DateComponent = ({_data}: {_data: any}) => {
     const disable =
       _data?.date.month > currentMonth ||
@@ -107,7 +133,13 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
     return (
       <TouchableOpacity
         disabled={disable}
-        onLongPress={() => {console.log('hello')}}
+        onPressIn={showModalHandler}
+        onPressOut={() => {
+          disableModal(
+            _data?.date?.dateString,
+            data[_data?.date?.dateString] ? true : false,
+          );
+        }}
         style={[
           styles.date,
           {
@@ -122,12 +154,13 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
           },
           {opacity: disable ? 0.2 : 1},
         ]}
-        onPress={() => {
-          _dateHandler(
-            _data?.date?.dateString,
-            data[_data?.date?.dateString] ? true : false,
-          );
-        }}>
+        // onPress={() => {
+        //   _dateHandler(
+        //     _data?.date?.dateString,
+        //     data[_data?.date?.dateString] ? true : false,
+        //   );
+        // }}
+      >
         {disable && (
           <Text
             style={[
@@ -149,7 +182,9 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
               colors={[
                 'white',
                 data[_data?.date?.dateString]
-                  ? colorHandler(data[_data?.date?.dateString])
+                  ? moodColorHandler(
+                      data[_data?.date?.dateString]?.toLowerCase(),
+                    )
                   : 'white',
               ]}
               start={{x: 0.0, y: 0.0}}
@@ -174,7 +209,9 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
                 style={{
                   ...styles.moodDateModalBottom,
                   backgroundColor: data[_data?.date?.dateString]
-                    ? colorHandler(data[_data?.date?.dateString])
+                    ? moodColorHandler(
+                        data[_data?.date?.dateString]?.toLowerCase(),
+                      )
                     : 'transparent',
                 }}
               />
@@ -199,15 +236,24 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
   };
 
   return (
-    <Calendar
-      date={date ? date : value}
-      maxDate={`${new Date().toUTCString()}`}
-      dayComponent={data => <DateComponent _data={data} />}
-      renderHeader={(date: any) => <CalendarCustomHeader date={date} />}
-      disableArrowRight={disableArrowRight}
-      style={[styles.calendar, containerStyle]}
-      onMonthChange={monthHandler}
-    />
+    <>
+      <Calendar
+        date={date ? date : value}
+        maxDate={`${new Date().toUTCString()}`}
+        dayComponent={data => <DateComponent _data={data} />}
+        renderHeader={(date: any) => <CalendarCustomHeader date={date} />}
+        disableArrowRight={disableArrowRight}
+        style={[styles.calendar, containerStyle]}
+        onMonthChange={monthHandler}
+      />
+      <Modal animationType="slide" transparent={true} visible={showModal}>
+        <TouchableOpacity
+          onPress={() => {
+            setShowModal(false);
+          }}
+          style={styles.modalContainer}></TouchableOpacity>
+      </Modal>
+    </>
   );
 };
 
@@ -242,5 +288,13 @@ const styles = StyleSheet.create({
     height: '10%',
     width: '100%',
     opacity: 0.4,
+  },
+  modalContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
 });

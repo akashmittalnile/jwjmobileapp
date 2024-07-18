@@ -23,10 +23,6 @@ import IconTab from '../../components/Tab/IconTab';
 import userPic from '../../assets/Icons/user.png';
 import emailIcon from '../../assets/Icons/email.png';
 import callIcon from '../../assets/Icons/call.png';
-import happyIcon from '../../assets/Icons/happy.png';
-import angryIcon from '../../assets/Icons/angry.png';
-import sadIcon from '../../assets/Icons/sad.png';
-import verySadIcon from '../../assets/Icons/very-sad.png';
 import TextWithIcon from '../../components/CustomText/TextWithIcon';
 import BorderBtn from '../../components/Button/BorderBtn';
 import {globalStyles} from '../../utils/constant';
@@ -38,7 +34,11 @@ import {authHandler} from '../../redux/Auth';
 import Toast from 'react-native-toast-message';
 import {followedCommunityHandler} from '../../redux/TrackNumbers';
 import FastImage from 'react-native-fast-image';
-import {findTenure, USMobileNumberFormatHandler} from '../../utils/Method';
+import {
+  findTenure,
+  moodColorHandler,
+  USMobileNumberFormatHandler,
+} from '../../utils/Method';
 import MonthYearCalendar from '../../components/Calendar/MonthYearCalendar';
 
 const Profile = () => {
@@ -134,6 +134,8 @@ const Profile = () => {
       percentage={item.avg}
       style={{borderColor: 'white'}}
       imageStyle={{height: '40%'}}
+      textStyle={{color: moodColorHandler(item.name)}}
+      percentageStyle={{color: moodColorHandler(item.name)}}
     />
   );
 
@@ -204,7 +206,7 @@ const Profile = () => {
     setShowDateModal(false);
     getInitialData(_date);
   };
-  console.log(userDetails?.currentPlan);
+
   return (
     <View style={styles.container}>
       <HomeHeader />
@@ -290,6 +292,7 @@ const Profile = () => {
                     style={{
                       fontSize: responsiveFontSize(1.5),
                       fontWeight: '400',
+                      color: moodColorHandler(profileData?.name?.toLowerCase()),
                     }}>
                     {profileData?.name}
                   </Text>
@@ -539,6 +542,7 @@ const styles = StyleSheet.create({
   image: {
     height: '100%',
     width: '100%',
+    backgroundColor: '#add8e6'
   },
   userName: {
     marginTop: responsiveHeight(0.5),

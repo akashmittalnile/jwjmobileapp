@@ -1,4 +1,10 @@
-import {View, StyleSheet, ActivityIndicator, Image} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+} from 'react-native';
 import React from 'react';
 import MainNavigation from './MainNavigation';
 import {
@@ -25,7 +31,7 @@ const MyNavigationContainer = () => {
   const userDetails = useAppSelector(state => state.userDetails);
 
   const imageViewerHandler = () => {
-    dispatch(showImageViewerHandler({show: false, uri: ''}));
+    dispatch(showImageViewerHandler({show: false, uri: ['']}));
     setBgColor(value => !value);
   };
 
@@ -37,12 +43,14 @@ const MyNavigationContainer = () => {
           <View
             style={{
               ...styles._modalContainer,
-              backgroundColor: bgColor ? 'black' : 'white',
+              // backgroundColor: bgColor ? 'black' : 'white',
+              backgroundColor: 'white'
             }}>
             <IconButton
               iconUri={
-                Image.resolveAssetSource(bgColor ? cancelWhiteIcon : cancelIcon)
-                  .uri
+                // Image.resolveAssetSource(bgColor ? cancelWhiteIcon : cancelIcon)
+                //   .uri
+                Image.resolveAssetSource(cancelIcon)?.uri
               }
               onPress={imageViewerHandler}
               style={styles.close}
@@ -53,17 +61,23 @@ const MyNavigationContainer = () => {
                 maxHeight: responsiveHeight(100),
                 width: responsiveWidth(100),
               }}
-              onPress={() => {
-                setBgColor(value => !value);
-              }}>
-              <FastImage
-                source={{uri, priority: FastImage.priority.high}}
-                style={{
-                  height: responsiveHeight(80),
-                  width: responsiveWidth(100),
-                }}
-                resizeMode={FastImage.resizeMode.contain}
-              />
+              // onPress={() => {
+              //   setBgColor(value => !value);
+              // }}
+              >
+              <ScrollView horizontal pagingEnabled={true}>
+                {uri?.map((uri: string, index: number) => (
+                  <FastImage
+                    key={index}
+                    source={{uri, priority: FastImage.priority.high}}
+                    style={{
+                      height: responsiveHeight(80),
+                      width: responsiveWidth(100),
+                    }}
+                    resizeMode={FastImage.resizeMode.contain}
+                  />
+                ))}
+              </ScrollView>
             </TouchableOpacity>
           </View>
         )}

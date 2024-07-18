@@ -144,7 +144,6 @@ const Payment = (props: any) => {
           };
         }
         const response = await PostApiWithToken(endPoint.buyPlan, data, token);
-        console.log(response?.data);
         if (response?.data?.status) {
           // getpaymentList();
           dispatch(reloadHandler({[ScreenNames.Home]: !homeReload}));

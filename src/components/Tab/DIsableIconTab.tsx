@@ -8,6 +8,7 @@ import {
   Image,
   ImageStyle,
   TouchableOpacity,
+  TextStyle,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
@@ -29,6 +30,7 @@ interface IconTabProps {
   onPress?: () => void;
   selected?: boolean;
   logo: string;
+  textStyle?: TextStyle;
 }
 const DisableIconTab: React.FC<IconTabProps> = ({
   style,
@@ -40,6 +42,7 @@ const DisableIconTab: React.FC<IconTabProps> = ({
   onPress,
   selected = false,
   logo,
+  textStyle,
 }) => {
   const clickHandler = () => {
     if (!disableButton && onPress) {
@@ -84,7 +87,7 @@ const DisableIconTab: React.FC<IconTabProps> = ({
           />
         </View>
         {text && (
-          <Text style={styles.text}>
+          <Text style={{...styles.text, ...textStyle}}>
             {text.charAt(0).toUpperCase() + text.slice(1)}
           </Text>
         )}

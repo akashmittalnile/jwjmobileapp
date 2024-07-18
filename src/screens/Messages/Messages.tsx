@@ -10,7 +10,6 @@ import {
 } from 'react-native-responsive-dimensions';
 import {globalStyles} from '../../utils/constant';
 import MessageTab from '../../components/Message/MessageTab';
-import userIcon from '../../assets/Images/user-2.png';
 import {GetApiWithToken, endPoint} from '../../services/Service';
 import {useAppSelector} from '../../redux/Store';
 import {firebase} from '@react-native-firebase/firestore';

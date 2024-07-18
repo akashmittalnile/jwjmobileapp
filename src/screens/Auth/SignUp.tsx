@@ -1,5 +1,12 @@
 /* eslint-disable prettier/prettier */
-import {View, Image, StyleSheet, Text} from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import React, {useRef} from 'react';
 import {
   responsiveFontSize,
@@ -9,7 +16,6 @@ import {
 import BgImage from '../../components/BgImage/BgImage';
 import TextInputField from '../../components/CustomInput/TextInputField';
 import PasswordInput from '../../components/CustomInput/PasswordInput';
-import TextInputWithoutIcon from '../../components/CustomInput/TextInputWithoutIcon';
 import BorderLessBtn from '../../components/Button/BorderLessBtn';
 import BorderBtn from '../../components/Button/BorderBtn';
 import {globalStyles} from '../../utils/constant';
@@ -51,6 +57,7 @@ const SignUp: React.FC<SignUpProps> = () => {
   const [verifyEmailLoader, setVerifyEmailLoader] =
     React.useState<boolean>(false);
   const [loader, setLoader] = React.useState<boolean>(false);
+  const [gender, setGender] = React.useState<string>('1');
 
   React.useEffect(() => {
     if (focused && !params?.emailVerified) {
@@ -101,6 +108,7 @@ const SignUp: React.FC<SignUpProps> = () => {
           user_name: values.user_name,
           email: values.email,
           id: params?.id,
+          gender,
         });
         if (response?.data?.status) {
           await AsyncStorage.setItem(
@@ -166,12 +174,16 @@ const SignUp: React.FC<SignUpProps> = () => {
     }
   };
 
+  const selectGender = (value: string) => {
+    setGender(value);
+  };
+
   return (
     <KeyboardAvoidingViewWrapper>
       <View style={styles.container}>
         <BgImage />
         <Header title="Sign Up" />
-        <Wrapper containerStyle={{marginTop: responsiveHeight(12)}}>
+        <Wrapper containerStyle={{marginTop: responsiveHeight(7)}}>
           <Formik
             innerRef={formikRef}
             initialValues={initialValues}
@@ -216,6 +228,79 @@ const SignUp: React.FC<SignUpProps> = () => {
                   errorText={touched.lastname && errors.lastname}
                   uri={userIconPath3}
                 />
+                <View style={styles.mainGenderContainer}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'flex-start',
+                      alignItems: 'center',
+                    }}>
+                    <Image
+                      source={require('../../assets/Icons/gender.png')}
+                      resizeMode="contain"
+                      style={{
+                        ...styles.genderImage,
+                        height: responsiveHeight(3),
+                        width: responsiveHeight(3),
+                      }}
+                    />
+                    <Text style={styles.genderText}>Gender</Text>
+                  </View>
+                  <View style={styles.genderContainer}>
+                    <TouchableOpacity
+                      style={{
+                        ...styles.genderTouch,
+                        borderColor:
+                          gender === '1'
+                            ? globalStyles.themeBlue
+                            : globalStyles.lightGray,
+                      }}
+                      onPress={() => {
+                        selectGender('1');
+                      }}>
+                      <Image
+                        source={require('../../assets/Icons/user.png')}
+                        resizeMode="cover"
+                        style={styles.genderImage}
+                      />
+                      <Text
+                        style={{
+                          fontSize: responsiveFontSize(1.6),
+                          color: 'black',
+                          fontWeight: '500',
+                        }}>
+                        Male
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.genderContainer}>
+                    <TouchableOpacity
+                      style={{
+                        ...styles.genderTouch,
+                        borderColor:
+                          gender === '2'
+                            ? globalStyles.themeBlue
+                            : globalStyles.lightGray,
+                      }}
+                      onPress={() => {
+                        selectGender('2');
+                      }}>
+                      <Image
+                        source={require('../../assets/Icons/girl.png')}
+                        resizeMode="cover"
+                        style={styles.genderImage}
+                      />
+                      <Text
+                        style={{
+                          fontSize: responsiveFontSize(1.6),
+                          color: 'black',
+                          fontWeight: '500',
+                        }}>
+                        Female
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
                 <TextInputField
                   value={values.user_name}
                   placeholder="User Name"
@@ -319,5 +404,53 @@ const styles = StyleSheet.create({
   },
   signupText: {
     textAlign: 'left',
+  },
+  mainGenderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: responsiveHeight(1),
+    paddingVertical: responsiveHeight(1),
+    paddingLeft: responsiveWidth(4),
+    borderRadius: responsiveWidth(1.5),
+    width: '95%',
+    ...Platform.select({
+      ios: {
+        shadowColor: globalStyles.shadowColor,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.7,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 1.5,
+      },
+    }),
+    backgroundColor: 'white',
+  },
+  genderContainer: {
+    marginLeft: responsiveWidth(4),
+    height: responsiveHeight(5),
+    width: '30%',
+  },
+  genderText: {
+    fontSize: responsiveFontSize(2),
+    fontWeight: '500',
+    color: 'rgba(137, 137, 137, .7)',
+    paddingLeft: responsiveWidth(2),
+  },
+  genderTouch: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: '5%',
+    height: responsiveHeight(5),
+    width: '100%',
+    borderRadius: responsiveHeight(5),
+    borderWidth: responsiveWidth(0.4),
+    overflow: 'hidden',
+  },
+  genderImage: {
+    height: responsiveHeight(3.5),
+    width: responsiveHeight(3.5),
   },
 });

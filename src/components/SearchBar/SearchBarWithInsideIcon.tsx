@@ -13,6 +13,7 @@ import {
   responsiveFontSize,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
+import BorderLessBtn from '../Button/BorderLessBtn';
 
 interface SearchBarWithInsideIconProps {
   value?: string;
@@ -26,6 +27,7 @@ interface SearchBarWithInsideIconProps {
   onClear?: (key: string) => void;
   focus?: boolean;
   resetFilter?: boolean;
+  clearSearch?: () => void;
 }
 
 let timeOut: any;
@@ -41,6 +43,7 @@ const SearchBarWithInsideIcon: React.FC<SearchBarWithInsideIconProps> = ({
   onClear,
   focus,
   resetFilter,
+  clearSearch,
 }) => {
   const [_value, setValue] = React.useState<string>('');
   const inputRef = React.useRef<TextInput>(null);
@@ -64,19 +67,32 @@ const SearchBarWithInsideIcon: React.FC<SearchBarWithInsideIconProps> = ({
 
   const onChangeTextHandler = (text: string) => {
     setValue(text);
-    if (timeOut) {
-      clearTimeout(timeOut);
-    }
-    timeOut = setTimeout(() => {
-      if (onSearch) {
-        text ? onSearch(`?${searchKey}=${text}`) : onSearch('');
-      }
-    }, 400);
+    // if (timeOut) {
+    //   clearTimeout(timeOut);
+    // }
+    // timeOut = setTimeout(() => {
+    //   if (onSearch) {
+    //     text ? onSearch(`?${searchKey}=${text}`) : onSearch('');
+    //   }
+    // }, 400);
   };
 
   const crossHandler = () => {
+    if (clearSearch) {
+      setValue('');
+      clearSearch();
+    }
+  };
+
+  const clearHandler = () => {
     setValue('');
-    onClear && _value && onClear('');
+    onClear && onClear('');
+  };
+
+  const searchHandler = () => {
+    if (onSearch) {
+      onSearch(`?${searchKey}=${_value}`);
+    }
   };
 
   return (
@@ -85,8 +101,8 @@ const SearchBarWithInsideIcon: React.FC<SearchBarWithInsideIconProps> = ({
         (iconColor === 'blue' ? (
           <Image
             source={require('../../assets/Icons/search-blue.png')}
-            style={[{width: '10%',height: '35%'}]}
-            resizeMode='contain'
+            style={[{width: '10%', height: '35%'}]}
+            resizeMode="contain"
           />
         ) : (
           <Image
@@ -102,9 +118,17 @@ const SearchBarWithInsideIcon: React.FC<SearchBarWithInsideIconProps> = ({
         placeholderTextColor={placeHolderColor}
         style={[styles.textInput]}
         onChangeText={onChangeTextHandler}
+        returnKeyType="done"
+        onSubmitEditing={searchHandler}
       />
+      {/* <BorderLessBtn
+        buttonText="Clear"
+        buttonTextStyle={styles.clearText}
+        containerStyle={styles.buttonTextContainer}
+        onClick={clearHandler}
+      /> */}
       {arrowSide === 'right' && (
-        <TouchableOpacity style={styles.touch} onPress={crossHandler}>
+        <TouchableOpacity style={styles.touch} onPress={clearHandler}>
           {_value ? (
             <Image
               source={require('../../assets/Icons/close-blue.png')}
@@ -159,6 +183,11 @@ const styles = StyleSheet.create({
     width: '85%',
     paddingHorizontal: 2,
     fontSize: responsiveFontSize(1.7),
-    color: 'black'
+    color: 'black',
+  },
+  buttonTextContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '12%',
   },
 });

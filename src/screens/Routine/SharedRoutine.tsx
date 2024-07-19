@@ -1,4 +1,10 @@
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  KeyboardAvoidingView,
+} from 'react-native';
 import React from 'react';
 import {useNavigation} from '@react-navigation/native';
 import Container from '../../components/Container/Container';
@@ -29,13 +35,13 @@ const SharedRoutine = () => {
   }, [reload.SharedRoutine]);
 
   const debounceHandler = (key: string) => {
-    if (cleartimeout) {
-      clearTimeout(cleartimeout);
-    }
-    cleartimeout = setTimeout(() => {
-      getSharedRoutineListHandler(key);
-      setSearchKey(key?.split('=')[1]);
-    }, 400);
+    // if (cleartimeout) {
+    //   clearTimeout(cleartimeout);
+    // }
+    // cleartimeout = setTimeout(() => {
+    getSharedRoutineListHandler(key);
+    setSearchKey(key?.split('=')[1]);
+    // }, 400);
   };
 
   const onClear = () => {
@@ -64,50 +70,59 @@ const SharedRoutine = () => {
   };
 
   return (
-    <Container
-      headerText="Shared Routine"
-      scrollViewContentContainerStyle={{paddingBottom: responsiveHeight(8)}}>
-      <View style={styles.searchBarContainer}>
-        <SearchBarWithInsideIcon
-          searchKey="name"
-          onSearch={(key: string) => {
-            debounceHandler(key);
-          }}
-          onClear={onClear}
-        />
-      </View>
-      {loader ? (
-        <SkeletonContainer />
-      ) : sharedRoutineList?.length > 0 ? (
-        sharedRoutineList?.map((item: any, index) => (
-          <RoutineListItem
-            key={index}
-            imageUri={item?.category_logo}
-            headerText={item?.routinename}
-            descriptionHeading={item?.routinesubtitle}
-            description={item?.description}
-            headerDate={item?.created_at}
-            onClick={() => {
-              routineCommentHandler(item?.routineid);
+    <KeyboardAvoidingView style={{flex: 1}}>
+      <Container
+        headerText="Shared Routine"
+        scrollViewContentContainerStyle={{
+          paddingBottom: responsiveHeight(8),
+          height: '100%',
+        }}>
+        <View style={styles.searchBarContainer}>
+          <SearchBarWithInsideIcon
+            searchKey="name"
+            onSearch={(key: string) => {
+              debounceHandler(key);
             }}
-            // routineType={item?.routinetype}
-            routineType={
-              item?.created_by === 'mySelf' ? 'Private Routine' : 'Shared Routine'
-            }
+            onClear={onClear}
           />
-        ))
-      ) : (
-        <View style={styles.noDataFoundContainer}>
-          <Image
-            source={require('../../assets/Icons/no-data-found.png')}
-            style={styles.noDataFoundImage}
-          />
-          <Text style={styles.noDataText}>
-            {searchKey ? 'No data found' : 'No shared routines found'}
-          </Text>
         </View>
-      )}
-    </Container>
+        <View style={{flex: 1}}>
+          {loader ? (
+            <SkeletonContainer />
+          ) : sharedRoutineList?.length > 0 ? (
+            sharedRoutineList?.map((item: any, index) => (
+              <RoutineListItem
+                key={index}
+                imageUri={item?.category_logo}
+                headerText={item?.routinename}
+                descriptionHeading={item?.routinesubtitle}
+                description={item?.description}
+                headerDate={item?.created_at}
+                onClick={() => {
+                  routineCommentHandler(item?.routineid);
+                }}
+                // routineType={item?.routinetype}
+                routineType={
+                  item?.created_by === 'mySelf'
+                    ? 'Private Routine'
+                    : 'Shared Routine'
+                }
+              />
+            ))
+          ) : (
+            <View style={styles.noDataFoundContainer}>
+              <Image
+                source={require('../../assets/Icons/no-data-found.png')}
+                style={styles.noDataFoundImage}
+              />
+              <Text style={styles.noDataText}>
+                {searchKey ? 'No data found' : 'No shared routines found'}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Container>
+    </KeyboardAvoidingView>
   );
 };
 

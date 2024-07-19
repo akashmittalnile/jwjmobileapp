@@ -10,6 +10,9 @@ import {
   Platform,
   RefreshControl,
   ActivityIndicator,
+  TouchableOpacity,
+  PermissionsAndroid,
+  Vibration,
 } from 'react-native';
 import React from 'react';
 import Header from '../../components/Header/Header';
@@ -36,6 +39,7 @@ import {endPoint} from '../../services/Service';
 import Toast from 'react-native-toast-message';
 import {reloadHandler} from '../../redux/ReloadScreen';
 import {moodColorHandler} from '../../utils/Method';
+import Voice from '@react-native-voice/voice';
 
 const textButtonIconPath = Image.resolveAssetSource(textButtonIcon).uri;
 const micButtonIconPath = Image.resolveAssetSource(micButtonIcon).uri;
@@ -44,6 +48,7 @@ const _micButtonIconPath = Image.resolveAssetSource(_micButtonIcon).uri;
 type AddNewJournalsRouteProp = RouteProp<RootStackParamList, 'AddNewJournals'>;
 
 let shouldKeyboardOffWithTags: any = true;
+let myText: any = null;
 
 const AddNewJournals = () => {
   const navigation = useNavigation();
@@ -73,6 +78,31 @@ const AddNewJournals = () => {
   const [removeImageId, setRemoveImageId] = React.useState<number[]>([]);
   const [shouldRefresh, setShouldRefresh] = React.useState<boolean>(false);
   const [reloadJournal, setReloadJournal] = React.useState<boolean>(false);
+  const [recognizedText, setRecognizedText] = React.useState('');
+  const [isListening, setIsListening] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    // myText = value ? value : '';
+    // if (!oldText) {
+    //   setRecognizedText(value);
+    // }
+    // value && setOldText(value);
+    // setRecognizedText(value ? value : '');
+  }, []);
+
+  React.useEffect(() => {
+    Voice.onSpeechStart = onSpeechStart;
+    Voice.onSpeechRecognized = onSpeechRecognized;
+    // Voice.onSpeechEnd = onSpeechEnd;
+    Voice.onSpeechError = onSpeechError;
+    Voice.onSpeechPartialResults = onSpeechResults;
+    Voice.onSpeechEnd = onSpeechEnd;
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
   React.useEffect(() => {
     if (params?.data?.id) {
       setMood(params?.data?.mood_id);
@@ -256,9 +286,6 @@ const AddNewJournals = () => {
       if (!content) {
         errStateHandler({content: true});
       }
-      // if (profileImage?.length === 0) {
-      //   errStateHandler({profileImage: true});
-      // }
     } catch (err: any) {
       console.log('err in create journals', err.message);
     } finally {
@@ -271,6 +298,51 @@ const AddNewJournals = () => {
   };
   const onTagBlur = () => {
     shouldKeyboardOffWithTags = true;
+  };
+
+  const onSpeechStartHandler = async () => {
+    Vibration?.vibrate(70);
+    if (Platform.OS === 'android') {
+      const result = await PermissionsAndroid?.request(
+        PermissionsAndroid?.PERMISSIONS.RECORD_AUDIO,
+      );
+      if (result === 'granted') {
+        Voice.start('en-US', {partialResults: true});
+      } else {
+        console.log('failed', {result});
+      }
+    } else {
+      Voice.start('en-US', {partialResults: true});
+    }
+  };
+
+  const onSpeechStart = () => {
+    Voice?._loaded;
+    setIsListening(true);
+  };
+
+  const onSpeechRecognized = () => {};
+
+  const onSpeechEnd = () => {
+    setIsListening(false);
+  };
+
+  const onSpeechError = (error: any) => {};
+
+  const onSpeechResults = (event: any) => {
+    setRecognizedText(myText ? myText : '' + ' ' + event?.value[0]);
+  };
+
+  const stopListening = async () => {
+    setTimeout(() => {
+      myText = recognizedText;
+    }, 120);
+    setIsListening(false);
+    try {
+      await Voice.stop();
+    } catch (e) {
+      console.error(e);
+    }
   };
   return (
     <KeyboardAvoidingView
@@ -341,10 +413,45 @@ const AddNewJournals = () => {
               {/* input */}
               <View
                 style={{
-                  marginTop: responsiveHeight(2),
-                  borderRadius: responsiveWidth(2),
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  ...styles.titleContainer,
+                  height: responsiveHeight(15),
+                  borderWidth: 0,
                 }}>
-                <FormatInput
+                <TextInput
+                  value={recognizedText}
+                  editable={true}
+                  onChangeText={() => {}}
+                  placeholder="Type Your Notes Here..."
+                  placeholderTextColor={globalStyles.textGray}
+                  style={[styles.textInputStyle, {width: '85%'}]}
+                  multiline={true}
+                />
+                <TouchableOpacity
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: responsiveWidth(1.5),
+                    height: responsiveHeight(5),
+                    width: responsiveHeight(5),
+                    borderRadius: responsiveHeight(3),
+                    backgroundColor: globalStyles.themeBlue,
+                  }}
+                  onLongPress={onSpeechStartHandler}
+                  onPressOut={stopListening}>
+                  <Image
+                    source={{uri: _micButtonIconPath}}
+                    style={{
+                      alignSelf: 'center',
+                      height: responsiveHeight(3),
+                      width: responsiveWidth(5),
+                    }}
+                    resizeMode="contain"
+                  />
+                </TouchableOpacity>
+                {/* <FormatInput
                   value={content}
                   onChangeText={text => contentHandler(text)}
                   onClickBottomLeftButton={() => {
@@ -356,7 +463,7 @@ const AddNewJournals = () => {
                     }
                     Keyboard?.dismiss();
                     setTypeModal('speak');
-                    setShowSpeakMoal(true);
+                    // setShowSpeakMoal(true);
                   }}
                   placeholder="Type Your Notes Here..."
                   textButtonText="Write"
@@ -371,7 +478,7 @@ const AddNewJournals = () => {
                       ? 'red'
                       : globalStyles.borderColorBlue,
                   }}
-                />
+                /> */}
               </View>
 
               {/* upload picture */}
@@ -431,7 +538,7 @@ const AddNewJournals = () => {
             </ScrollView>
           </View>
         </View>
-        {typeModal !== 'write' && showSpeakModal && (
+        {/* {typeModal !== 'write' && showSpeakModal && (
           <SpeakModal
             value={content}
             onPress={() => {}}
@@ -440,7 +547,7 @@ const AddNewJournals = () => {
               setShowSpeakMoal(false);
             }}
           />
-        )}
+        )} */}
       </>
     </KeyboardAvoidingView>
   );

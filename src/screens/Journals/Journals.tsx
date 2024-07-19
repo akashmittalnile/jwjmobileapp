@@ -143,7 +143,6 @@ const Journals = () => {
   };
 
   const debouncedSearch = (text: any) => {
-    console.log({text});
     pagination.currentPage = 1;
     pagination.lastPage = 1;
     pagination.loader = false;
@@ -168,9 +167,11 @@ const Journals = () => {
         pagination.lastPage = 1;
         pagination.loader = false;
         setSearch('');
-        setDate('');
-        getJournalsList('', true);
+        getJournalsList(date ? `?date=${date}` : '', true);
       }}
+      // clearSearch={() => {
+      //   setSearch('')
+      // }}
       resetFilter={focused}
     />
   );

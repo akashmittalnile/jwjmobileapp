@@ -26,10 +26,7 @@ import BorderBtn from '../../components/Button/BorderBtn';
 import CommunityListItem from '../../components/CommunityListItem/CommunityListItem';
 import ScreenNames from '../../utils/ScreenNames';
 import CommunityModal from '../../components/Modal/CommunityModal';
-import {
-  GetApiWithToken,
-  endPoint,
-} from '../../services/Service';
+import {GetApiWithToken, endPoint} from '../../services/Service';
 import {useAppDispatch, useAppSelector} from '../../redux/Store';
 import Toast from 'react-native-toast-message';
 import SkeletonContainer from '../../components/Skeleton/SkeletonContainer';
@@ -145,16 +142,25 @@ const Community = () => {
     navigation.navigate(ScreenNames.AddNewPost, {createCommunity: true});
   };
 
+  const clearHandler = () => {
+    pagination.currentPage = 1;
+    pagination.lastPage = 1;
+    pagination.loader = false;
+    setSearchValue('');
+    searchHandler('');
+  };
+
   const searchBar = (
     <View style={styles.searchBarContainer}>
       <SearchBarWithInsideIcon
         value={saerchValue}
         searchKey="search"
-        placeHolder="Search Community By Name"
-        arrowSide="left"
+        placeHolder="Search Community"
+        // arrowSide="left"
         style={{
-          width: '65%',
+          width: '73%',
           height: responsiveHeight(6),
+          paddingLeft: '5%',
           elevation: 3,
           shadowColor: globalStyles.lightGray,
         }}
@@ -165,11 +171,15 @@ const Community = () => {
           setSearchValue(key?.split('=')[1]);
           searchHandler(key);
         }}
+        onClear={clearHandler}
+        // clearSearch={() => {
+        //   setSearchValue('');
+        // }}
       />
       <BorderBtn
         buttonText="Add New"
         onClick={createCommunityHandler}
-        containerStyle={{width: '34%', marginTop: 0, elevation: 3}}
+        containerStyle={{width: '25%', marginTop: 0, elevation: 3}}
       />
     </View>
   );

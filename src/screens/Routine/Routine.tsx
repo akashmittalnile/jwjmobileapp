@@ -67,20 +67,6 @@ const Routine = () => {
     number | undefined
   >(undefined);
 
-  // React.useEffect(() => {
-  //   if (focused) {
-  //     console.log('chal gya')
-  //     pagination = {
-  //       currentPage: 1,
-  //       lastPage: 1,
-  //       loader: false,
-  //     };
-  //     setDate(moment().format('YYYY-MM-DD'));
-  //     getData(moment().format('YYYY-MM-DD'));
-  //     getSharedCount();
-  //   }
-  // }, [focused]);
-
   React.useEffect(() => {
     setShowSkeleton(true);
     if (focused) {
@@ -93,22 +79,10 @@ const Routine = () => {
       const tempDate = moment().format('YYYY-MM-DD');
       setDate(tempDate);
       getData(tempDate);
+      setSearch('');
       getSharedCount();
     }
   }, [focused]);
-
-  // React.useEffect(() => {
-  //   pagination = {
-  //     currentPage: 1,
-  //     lastPage: 1,
-  //     loader: false,
-  //   };
-  //   getSharedCount();
-  // }, [focused]);
-
-  // React.useEffect(() => {
-  //   !focused && setDate('');
-  // }, [focused]);
 
   const getData = async (_date: any) => {
     await goalDatahandler();
@@ -196,6 +170,7 @@ const Routine = () => {
     if (key?.includes('name') && date) {
       _endpoint = `${endPoint?.routine}${key}&date=${date}`;
     }
+    console.log(_endpoint)
     try {
       loader && !showSkeleton && setShowSkeleton(true);
       const response = await GetApiWithToken(_endpoint, token);
@@ -255,9 +230,11 @@ const Routine = () => {
               pagination.currentPage = 1;
               (pagination.lastPage = 1), (pagination.loader = false);
               setSearch('');
-              setDate('');
-              searchHandler('');
+              searchHandler(date ? `?date=${date}` : '');
             }}
+            // clearSearch={() => {
+            //   setSearch('')
+            // }}
             resetFilter={focused}
           />
         </View>

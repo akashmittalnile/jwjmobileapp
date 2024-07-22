@@ -45,6 +45,7 @@ const Search = () => {
     state => state.TrackNumber.followedCommunity,
   );
   const [date, setDate] = React.useState<string>(moment().format('YYYY-MM-DD'));
+  const [search, setSearch] = React.useState<string>('');
   const [openCalendarModal, setDateOpenModal] = React.useState<boolean>(false);
   const [showMoodModal, setShowMoodModal] = React.useState<boolean>(false);
   const [shouldRefresh, setshouldRefresh] = React.useState<boolean>(false);
@@ -65,9 +66,9 @@ const Search = () => {
 
   const getData = async (key: string) => {
     let _endpoint = `${endPoint.search}${key}`;
-    if (key?.includes('search') && date) {
-      _endpoint = `${endPoint.search}${key}&date=${date}`;
-    }
+    // if (key?.includes('search') && date) {
+    //   _endpoint = `${endPoint.search}${key}&date=${date}`;
+    // }
     setShowSkeleton(true);
     try {
       const response = await GetApiWithToken(_endpoint, token);
@@ -91,6 +92,7 @@ const Search = () => {
   const dateHandler = (date: string) => {
     const _date = moment(date).format('YYYY-MM-DD');
     setDate(_date);
+    setSearch('');
     setDateOpenModal(false);
     getData(`?date=${_date}`);
   };
@@ -160,7 +162,7 @@ const Search = () => {
       showSkeleton && setShowSkeleton(false);
     }
   };
-
+ console.log({search, date})
   return (
     <>
       <View style={styles.container}>
@@ -180,12 +182,17 @@ const Search = () => {
             {/* searchBar */}
             {/* <SearchBar containerStyle={styles.searchBar} focus={true} /> */}
             <SearchBarWithInsideIcon
+              value={search}
               searchKey="search"
               style={styles.searchBar}
               onSearch={key => {
+                setSearch(key?.split('=')[1]);
+                setDate('');
                 getData(key);
               }}
               onClear={() => {
+                setDate('');
+                setSearch('')
                 getData('');
               }}
             />
@@ -225,6 +232,7 @@ const Search = () => {
                       onPress={() => {
                         getData('');
                         setDate('');
+                        setSearch('');
                       }}>
                       <Text
                         style={{

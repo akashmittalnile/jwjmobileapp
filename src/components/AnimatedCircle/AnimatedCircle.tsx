@@ -8,19 +8,18 @@ import Animated, {
   Easing
 } from 'react-native-reanimated';
 import {responsiveHeight} from 'react-native-responsive-dimensions';
-import {globalStyles} from '../../utils/constant';
 
 interface AnimatedCircleProps {
   style?: ViewStyle;
 }
 
 const AnimatedCircle: React.FC<AnimatedCircleProps> = ({style}) => {
-  const value = useSharedValue(responsiveHeight(2));
+  const value = useSharedValue(responsiveHeight(1.5));
   const opacity = useSharedValue(0);
 
   const startAnimation = useCallback(() => {
     value.value = withRepeat(
-      withTiming(value.value === responsiveHeight(2) ? responsiveHeight(4) : 0, { duration: 1200, easing: Easing.linear }),
+      withTiming(value.value === responsiveHeight(1.5) ? responsiveHeight(3) : 0, { duration: 1200, easing: Easing.linear }),
       -1,
       true,
     );

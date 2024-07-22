@@ -29,6 +29,8 @@ import FormatInput from '../../components/CustomInput/FormatInput';
 import textButtonIcon from '../../assets/Icons/pen.png';
 import micButtonIcon from '../../assets/Icons/microphone.png';
 import _micButtonIcon from '../../assets/Icons/microphone-white.png';
+import svgMicBlue from '../../assets/Icons/mic-blue.svg';
+import svgMicWhite from '../../assets/Icons/mic.svg';
 import BorderBtn from '../../components/Button/BorderBtn';
 import SpeakModal from '../../components/Modal/SpeakModal';
 import UploadPicture from '../../components/Upload/UploadPicture';
@@ -40,17 +42,27 @@ import Toast from 'react-native-toast-message';
 import {reloadHandler} from '../../redux/ReloadScreen';
 import {moodColorHandler} from '../../utils/Method';
 import Voice from '@react-native-voice/voice';
+import Animated, {
+  Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from 'react-native-reanimated';
+import AnimatedCircle from '../../components/AnimatedCircle/AnimatedCircle';
+import SvgUri from 'react-native-svg-uri';
 
-const textButtonIconPath = Image.resolveAssetSource(textButtonIcon).uri;
-const micButtonIconPath = Image.resolveAssetSource(micButtonIcon).uri;
-const _micButtonIconPath = Image.resolveAssetSource(_micButtonIcon).uri;
+// const textButtonIconPath = Image.resolveAssetSource(textButtonIcon).uri;
+// const micButtonIconPath = Image.resolveAssetSource(micButtonIcon).uri;
+// const _micButtonIconPath = Image.resolveAssetSource(_micButtonIcon).uri;
 
 type AddNewJournalsRouteProp = RouteProp<RootStackParamList, 'AddNewJournals'>;
 
 let shouldKeyboardOffWithTags: any = true;
 let myText: any = null;
+let intervalId: any = null;
 
 const AddNewJournals = () => {
+  const glowValue = useSharedValue(0);
   const navigation = useNavigation();
   const moodData = useAppSelector(state => state.mood);
   const token = useAppSelector(state => state.auth.token);
@@ -107,7 +119,8 @@ const AddNewJournals = () => {
     if (params?.data?.id) {
       setMood(params?.data?.mood_id);
       setTitle(params?.data?.title);
-      setContent(params?.data?.content);
+      setRecognizedText(params?.data?.content);
+      // setContent(params?.data?.content);
       // setCriteria(params?.data?.search_criteria);
       const temp = params?.data?.images?.map((item: any) => ({
         id: item?.id,
@@ -126,6 +139,47 @@ const AddNewJournals = () => {
   const moodHandler = (mood_id: string) => {
     setMood(mood_id);
   };
+
+  const startAnimation = () => {
+    glowValue.value = withTiming(
+      1,
+      {
+        duration: 1500,
+        easing: Easing.linear,
+      },
+      () => {
+        glowValue.value = withTiming(0, {
+          duration: 1500,
+          easing: Easing.linear,
+        });
+      },
+    );
+
+    intervalId = setInterval(() => {
+      glowValue.value = withTiming(glowValue.value === 0 ? 1 : 0, {
+        duration: 1500,
+        easing: Easing.linear,
+      });
+    }, 1500);
+  };
+
+  const stopAnimation = () => {
+    if (intervalId) {
+      glowValue.value = withTiming(0, {
+        duration: 1500,
+        easing: Easing.linear,
+      });
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      shadowOpacity: glowValue.value,
+      borderColor: `rgba(208, 240, 192, ${glowValue?.value})`,
+    };
+  });
 
   const onRefresh = () => {
     setReloadJournal(value => !value);
@@ -194,16 +248,16 @@ const AddNewJournals = () => {
 
   const saveButtonHandler = async () => {
     try {
+      stopAnimation();
       setLoader(true);
       const isCriteriaTagValid = criteriaValidator();
-      if (title && content && mood && isCriteriaTagValid) {
+      if (title && recognizedText && mood && isCriteriaTagValid) {
         let count = 0;
         const formData = new FormData();
         params?.data?.id && formData.append('id', params?.data?.id);
         formData.append('title', title);
-        formData.append('content', content);
+        formData.append('content', recognizedText);
         formData.append('mood_id', mood);
-        console.log(criteria);
         for (let i = 0; i < criteria?.length; i++) {
           if (params?.data?.id) {
             if (criteria[i]?.editable) {
@@ -283,7 +337,7 @@ const AddNewJournals = () => {
       if (!title) {
         errStateHandler({title: true});
       }
-      if (!content) {
+      if (!recognizedText) {
         errStateHandler({content: true});
       }
     } catch (err: any) {
@@ -301,6 +355,7 @@ const AddNewJournals = () => {
   };
 
   const onSpeechStartHandler = async () => {
+    myText = recognizedText;
     Vibration?.vibrate(70);
     if (Platform.OS === 'android') {
       const result = await PermissionsAndroid?.request(
@@ -317,38 +372,54 @@ const AddNewJournals = () => {
   };
 
   const onSpeechStart = () => {
-    Voice?._loaded;
+    startAnimation();
     setIsListening(true);
   };
 
   const onSpeechRecognized = () => {};
 
   const onSpeechEnd = () => {
-    setIsListening(false);
+    intervalId && stopAnimation();
+    // setIsListening(false);
   };
 
   const onSpeechError = (error: any) => {};
 
   const onSpeechResults = (event: any) => {
-    setRecognizedText(myText ? myText : '' + ' ' + event?.value[0]);
+    setRecognizedText(
+      myText ? myText + ' ' + event?.value[0] : event?.value[0],
+    );
+    err?.content && setErr(preData => ({...preData, content: false}));
   };
 
   const stopListening = async () => {
     setTimeout(() => {
       myText = recognizedText;
-    }, 120);
+    }, 200);
+    intervalId && stopAnimation();
     setIsListening(false);
+
     try {
       await Voice.stop();
     } catch (e) {
       console.error(e);
     }
   };
+
+  const speechToTextHandler = () => {
+    if (intervalId) {
+      stopListening();
+    } else {
+      onSpeechStartHandler();
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={{flex: 1}}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       onTouchEnd={() => {
+        console.log('click');
         Keyboard?.isVisible() &&
           shouldKeyboardOffWithTags &&
           Keyboard?.dismiss();
@@ -411,46 +482,75 @@ const AddNewJournals = () => {
               </View>
 
               {/* input */}
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  ...styles.titleContainer,
-                  height: responsiveHeight(15),
-                  borderWidth: 0,
-                }}>
-                <TextInput
-                  value={recognizedText}
-                  editable={true}
-                  onChangeText={() => {}}
-                  placeholder="Type Your Notes Here..."
-                  placeholderTextColor={globalStyles.textGray}
-                  style={[styles.textInputStyle, {width: '85%'}]}
-                  multiline={true}
-                />
-                <TouchableOpacity
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginRight: responsiveWidth(1.5),
-                    height: responsiveHeight(5),
-                    width: responsiveHeight(5),
-                    borderRadius: responsiveHeight(3),
-                    backgroundColor: globalStyles.themeBlue,
-                  }}
-                  onLongPress={onSpeechStartHandler}
-                  onPressOut={stopListening}>
-                  <Image
-                    source={{uri: _micButtonIconPath}}
-                    style={{
-                      alignSelf: 'center',
-                      height: responsiveHeight(3),
-                      width: responsiveWidth(5),
+              <View>
+                <Animated.View
+                  style={[
+                    styles.titleContainer,
+                    styles.box,
+                    animatedStyle,
+                    {borderColor: err?.content ? 'red' : 'transparent'},
+                  ]}>
+                  <TextInput
+                    value={recognizedText}
+                    editable={true}
+                    onChangeText={(text: any) => {
+                      setRecognizedText(text);
+                      setErr(preData => ({...preData, content: false}));
                     }}
-                    resizeMode="contain"
+                    placeholder="Type Your Notes Here..."
+                    placeholderTextColor={globalStyles.textGray}
+                    style={[styles.textInputStyle, {width: '85%'}]}
+                    multiline={true}
                   />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginRight: responsiveWidth(2),
+                      height: responsiveHeight(6),
+                      width: responsiveHeight(6),
+                      borderRadius: responsiveHeight(3),
+                      backgroundColor: intervalId
+                        ? globalStyles.themeBlue
+                        : 'white',
+                      borderWidth: responsiveWidth(0.4),
+                      borderColor: globalStyles.themeBlue,
+                    }}
+                    // onLongPress={onSpeechStartHandler}
+                    // onPressOut={stopListening}
+                    onPress={speechToTextHandler}>
+                    {/* <Image
+                      source={{uri: _micButtonIconPath}}
+                      style={{
+                        alignSelf: 'center',
+                        height: responsiveHeight(3),
+                        width: responsiveWidth(5),
+                      }}
+                      resizeMode="contain"
+                    /> */}
+                    <SvgUri
+                      source={{
+                        uri: Image.resolveAssetSource(
+                          intervalId ? svgMicWhite : svgMicBlue,
+                        )?.uri,
+                      }}
+                      height={responsiveHeight(3.5)}
+                      width={responsiveHeight(3.5)}
+                    />
+                  </TouchableOpacity>
+                  <View
+                    style={{
+                      position: 'absolute',
+                      top: responsiveWidth(2),
+                      right: responsiveWidth(2),
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: responsiveWidth(4),
+                      width: responsiveHeight(4),
+                    }}>
+                    {intervalId && <AnimatedCircle />}
+                  </View>
+                </Animated.View>
                 {/* <FormatInput
                   value={content}
                   onChangeText={text => contentHandler(text)}
@@ -609,5 +709,18 @@ const styles = StyleSheet.create({
   saveButtonContainer: {
     marginTop: responsiveHeight(2),
     marginBottom: responsiveHeight(3),
+  },
+  box: {
+    position: 'relative',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    height: responsiveHeight(15),
+    borderRadius: 20,
+    borderWidth: responsiveWidth(0.4),
+    shadowColor: globalStyles.themeBlue,
+    shadowOffset: {width: 0, height: 0},
+    shadowRadius: 20,
   },
 });

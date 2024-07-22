@@ -46,6 +46,7 @@ const ScreenNames = {
   Search: 'Search',
   MemberList: 'MemberList',
   Calendar: 'Calendar',
+  DownloadJournal: 'DownloadJournal'
 };
 
 export default ScreenNames;

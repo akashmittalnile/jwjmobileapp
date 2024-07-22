@@ -40,6 +40,7 @@ import Contact from '../screens/Contact/Contact';
 import ContactForQuery from '../screens/Contact/ContactForQuery';
 import Search from '../screens/Search/Search';
 import Calendar from '../screens/Calendar/Calendar';
+import DownloadJournal from '../screens/Journals/DownloadJournal';
 import ScreenNames from '../utils/ScreenNames';
 import {userDetailsHandler} from '../redux/UserDetails';
 
@@ -157,6 +158,10 @@ const MainNavigation = () => {
         </>
       ) : (
         <>
+          {/* <Stack.Screen
+            name={ScreenNames.DownloadJournal}
+            component={DownloadJournal}
+          /> */}
           <Stack.Screen
             name={ScreenNames.Drawer}
             component={DrawerNavigation}
@@ -247,6 +252,10 @@ const MainNavigation = () => {
             component={ContactForQuery}
           />
           <Stack.Screen name={ScreenNames.Calendar} component={Calendar} />
+          {/* <Stack.Screen
+            name={ScreenNames.DownloadJournal}
+            component={DownloadJournal}
+          /> */}
         </>
       )}
     </Stack.Navigator>

@@ -187,7 +187,6 @@ const AddNewPost = () => {
         }
         const response = await PostApiWithToken(_endpoint, data, token);
         if (response?.data?.status) {
-          console.log(response?.data);
           dispatch(
             reloadHandler({
               [ScreenNames.Community]: !community,

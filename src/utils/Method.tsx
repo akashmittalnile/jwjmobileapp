@@ -5,6 +5,8 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import PushNotification from 'react-native-push-notification';
 import maleIcon from '../assets/Icons/user.png';
 import femaleIcon from '../assets/Icons/girl.png';
+import Toast from 'react-native-toast-message';
+import RNFetchBlob from 'rn-fetch-blob';
 
 export const isValidDateHandler = (dateString: string) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
@@ -187,4 +189,71 @@ export const resolveProfileImage = (gender: string) => {
   } else if (gender?.toLowerCase() === 'female') {
     return Image.resolveAssetSource(femaleIcon).uri;
   }
+};
+
+export const fetchPdf = (pdfLink: string) => {
+  return new Promise<any>(async (resolve, reject) => {
+    try {
+      if (!pdfLink) {
+        console.log('PDF link is missing.');
+        return;
+      }
+
+      const {config, fs} = RNFetchBlob;
+      const downloadDir =
+        Platform.OS === 'ios' ? fs?.dirs.DocumentDir : fs?.dirs.DownloadDir;
+      const fileName = pdfLink.substring(pdfLink.lastIndexOf('/') + 1);
+      const path = `${downloadDir}/${fileName}.pdf`;
+
+      const configfb = {
+        fileCache: true,
+        addAndroidDownloads: {
+          useDownloadManager: true,
+          notification: true,
+          mediaScannable: true,
+          title: `Invoice.pdf`,
+          path,
+        },
+        useDownloadManager: true,
+        notification: true,
+        mediaScannable: true,
+        title: 'Invoice.pdf',
+        path,
+      };
+
+      const configOptions = Platform.select({
+        ios: configfb,
+        android: configfb,
+      });
+
+      const response = await RNFetchBlob.config(configOptions || {})?.fetch(
+        'GET',
+        pdfLink,
+      );
+      if (Platform.OS === 'ios') {
+        await RNFetchBlob.fs.writeFile(configfb.path, response.data, 'base64');
+        RNFetchBlob.ios.previewDocument(configfb.path);
+        resolve(true);
+      } else {
+        resolve(true);
+        console.log('file downloaded');
+      }
+    } catch (err: any) {
+      reject(err);
+      console.log('Error fetching PDF:', err.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Error downloading PDF',
+      });
+    }
+  });
+};
+
+export const capitaliseFirstlatter = (_value: string) => {
+  const value = _value?.trim();
+  const valueArray = value?.split(' ');
+  const result = valueArray
+    ?.map((val: string) => val?.charAt(0)?.toUpperCase() + val?.slice(1))
+    ?.join(' ');
+  return result;
 };

@@ -303,7 +303,7 @@ const Search = () => {
                           emojiText={item?.mood_name}
                           description={item?.content}
                           date={item?.created_at}
-                          pdfLink={item?.download_pdf}
+                          // pdfLink={item?.download_pdf}
                         />
                       ))}
                     </View>

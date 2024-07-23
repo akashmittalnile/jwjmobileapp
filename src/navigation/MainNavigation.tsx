@@ -158,10 +158,6 @@ const MainNavigation = () => {
         </>
       ) : (
         <>
-          {/* <Stack.Screen
-            name={ScreenNames.DownloadJournal}
-            component={DownloadJournal}
-          /> */}
           <Stack.Screen
             name={ScreenNames.Drawer}
             component={DrawerNavigation}
@@ -252,10 +248,10 @@ const MainNavigation = () => {
             component={ContactForQuery}
           />
           <Stack.Screen name={ScreenNames.Calendar} component={Calendar} />
-          {/* <Stack.Screen
+          <Stack.Screen
             name={ScreenNames.DownloadJournal}
             component={DownloadJournal}
-          /> */}
+          />
         </>
       )}
     </Stack.Navigator>

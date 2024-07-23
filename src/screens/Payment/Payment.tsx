@@ -41,6 +41,7 @@ import ScreenNames from '../../utils/ScreenNames';
 import {reloadHandler} from '../../redux/ReloadScreen';
 import Card from '../../components/Card/Card';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import {fetchPdf} from '../../utils/Method';
 
 type PaymentRouteProps = RouteProp<RootStackParamList, 'Payment'>;
 
@@ -100,13 +101,26 @@ const Payment = (props: any) => {
     //   setRefreshing(false);
     // });
   }, []);
+
   const handlePayClick = async () => {
+    setLoading(preData => ({...preData, cardLoader: true}));
+    setSubmitLoader(true);
     try {
-      {
-        setLoading(preData => ({...preData, cardLoader: true}));
-        setSubmitLoader(true);
-        const res: any = await createToken({card, type: 'Card'});
-        console.log(res)
+      if (params?.downloadJournal) {
+        const data = {card_id: selectedCard, start_date: params?.startDate};
+        const response = await PostApiWithToken(
+          endPoint.buyJournalPdf,
+          data,
+          token,
+        );
+        if (response?.data?.status) {
+          const result = await fetchPdf(response?.data?.data);
+          if(result){
+            navigation.navigate(ScreenNames.Journals);
+          }
+        }
+      } else {
+        // const res: any = await createToken({card, type: 'Card'});
         let data;
         if (selectedCard) {
           data = {
@@ -125,24 +139,26 @@ const Payment = (props: any) => {
             plan_id: params?.data?.id,
             card_id: selectedCard,
           };
-        } else {
-          data = {
-            stripeToken: res.token.id,
-            plan_timeperiod:
-              params?.data?.anually_price_id == params?.data?.monthly_price_id
-                ? 3
-                : params?.data?.selected_plan
-                ? '2'
-                : '1',
-            price_id: params?.data?.selected_plan
-              ? params?.data?.anually_price_id
-              : params?.data?.monthly_price_id,
-            price: params?.data?.selected_plan
-              ? params?.data?.anually_price
-              : params?.data?.monthly_price,
-            plan_id: params?.data?.id,
-          };
         }
+        // else {
+        //   console.log('2');
+        //   data = {
+        //     stripeToken: res.token.id,
+        //     plan_timeperiod:
+        //       params?.data?.anually_price_id == params?.data?.monthly_price_id
+        //         ? 3
+        //         : params?.data?.selected_plan
+        //         ? '2'
+        //         : '1',
+        //     price_id: params?.data?.selected_plan
+        //       ? params?.data?.anually_price_id
+        //       : params?.data?.monthly_price_id,
+        //     price: params?.data?.selected_plan
+        //       ? params?.data?.anually_price
+        //       : params?.data?.monthly_price,
+        //     plan_id: params?.data?.id,
+        //   };
+        // }
         const response = await PostApiWithToken(endPoint.buyPlan, data, token);
         if (response?.data?.status) {
           // getpaymentList();
@@ -160,7 +176,7 @@ const Payment = (props: any) => {
     } finally {
       // addpayment && setaddpayment(false);
       showModal && setShowModal(true);
-      setLoading(preData => ({...preData, cardLoader: false,loader: false}));
+      setLoading(preData => ({...preData, cardLoader: false, loader: false}));
       setSubmitLoader(false);
     }
   };

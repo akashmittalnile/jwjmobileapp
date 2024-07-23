@@ -29,7 +29,7 @@ import CustomCalendar from '../../components/Calendar/CustomCalendar';
 import SearchBarWithInsideIcon from '../../components/SearchBar/SearchBarWithInsideIcon';
 import BorderLessBtn from '../../components/Button/BorderLessBtn';
 import moment from 'moment';
-import debounce from 'lodash/debounce';
+import DownloadJournal from './DownloadJournal';
 
 const pagination = {
   currentPage: 1,
@@ -236,7 +236,7 @@ const Journals = () => {
         emojiText={item.mood_name}
         description={item.content}
         date={item.created_at}
-        pdfLink={item?.download_pdf}
+        // pdfLink={item?.download_pdf}
       />
     ),
     [],
@@ -258,6 +258,10 @@ const Journals = () => {
     }
   }, [date, search, journals]);
 
+  const downloadJournalHandler = () => {
+    navigation?.navigate(ScreenNames?.DownloadJournal);
+  };
+
   return (
     <>
       <View style={styles.mainContainer}>
@@ -275,7 +279,7 @@ const Journals = () => {
               initialNumToRender={10}
               windowSize={21}
               removeClippedSubviews
-              contentContainerStyle={{paddingBottom: responsiveHeight(15)}}
+              contentContainerStyle={{paddingBottom: responsiveHeight(20)}}
               refreshControl={
                 <RefreshControl
                   refreshing={shouldRefresh}
@@ -327,6 +331,14 @@ const Journals = () => {
             />
           )}
         </View>
+        <TouchableOpacity
+          style={styles.downloadJournal}
+          onPress={downloadJournalHandler}>
+          <Image
+            source={require('../../assets/Icons/download-white.png')}
+            style={styles.downloadJournalIcon}
+          />
+        </TouchableOpacity>
       </View>
       {showModal && (
         <View
@@ -433,5 +445,22 @@ const styles = StyleSheet.create({
     width: responsiveWidth(80),
     padding: 10,
     borderRadius: responsiveWidth(2),
+  },
+  downloadJournal: {
+    position: 'absolute',
+    bottom: responsiveHeight(11),
+    right: responsiveWidth(5),
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: responsiveHeight(7),
+    width: responsiveHeight(7),
+    borderRadius: responsiveHeight(7),
+    backgroundColor: 'white',
+    borderWidth: responsiveWidth(0.4),
+    borderColor: globalStyles.themeBlue
+  },
+  downloadJournalIcon: {
+    height: responsiveHeight(4),
+    width: responsiveHeight(4),
   },
 });

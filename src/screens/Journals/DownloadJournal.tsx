@@ -3,14 +3,19 @@ import React from 'react';
 import Header from '../../components/Header/Header';
 import {globalStyles} from '../../utils/constant';
 import {
+  responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import CustomCalendar from '../../components/Calendar/CustomCalendar';
 import moment from 'moment';
 import BorderBtn from '../../components/Button/BorderBtn';
+import {useNavigation} from '@react-navigation/native';
+import ScreenNames from '../../utils/ScreenNames';
+import Wrapper from '../../components/Wrapper/Wrapper';
 
 const DownloadJournal = () => {
+  const navigation = useNavigation();
   const [showCalendar, setShowCalendar] = React.useState<boolean>(false);
   const [date, setDate] = React.useState<string>('');
 
@@ -23,6 +28,13 @@ const DownloadJournal = () => {
     setShowCalendar(value => !value);
   };
 
+  const downloadJournal = () => {
+    navigation.navigate(ScreenNames.Payment, {
+      downloadJournal: true,
+      startDate: date,
+    });
+  };
+
   return (
     <>
       <View style={styles.mainContainer}>
@@ -30,54 +42,66 @@ const DownloadJournal = () => {
           <Header title="Download Journal" notificationButton={false} />
         </View>
         <View style={styles.subContainer}>
-          <View style={styles.calendarDateContainer}>
-            <TouchableOpacity
-              style={styles.touch}
-              activeOpacity={0.5}
-              onPress={showCalendarHandler}>
-              <View style={styles.calendarTextContainer}>
-                <Text style={styles.calendarText}>
-                  {date ? date : 'MM-DD-YYYY'}
-                </Text>
-              </View>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={require('../../assets/Icons/calendar-blue.png')}
-                  resizeMode="contain"
-                  style={{...styles.img, marginLeft: responsiveWidth(2)}}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.calendarDateContainer}>
-            <TouchableOpacity
-              style={styles.touch}
-              activeOpacity={0.5}
-              onPress={showCalendarHandler}>
-              <View style={styles.calendarTextContainer}>
-                <Text style={styles.calendarText}>
-                  {date
-                    ? moment(date, 'MM-DD-YYYY')
-                        .add(6, 'month')
-                        .format('MM-DD-YYYY')
-                    : 'MM-DD-YYYY'}
-                </Text>
-              </View>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={require('../../assets/Icons/calendar-blue.png')}
-                  resizeMode="contain"
-                  style={{...styles.img, marginLeft: responsiveWidth(2)}}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-          <BorderBtn
-            disable={date ? false : true}
-            buttonText="Download"
-            onClick={() => {}}
-            containerStyle={styles.button}
-          />
+          <Wrapper containerStyle={styles.wrapper}>
+            <Text style={styles.headingText}>From Date</Text>
+            <View style={styles.calendarDateContainer}>
+              <TouchableOpacity
+                style={styles.touch}
+                activeOpacity={0.5}
+                onPress={showCalendarHandler}>
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={require('../../assets/Icons/calendar-blue.png')}
+                    resizeMode="contain"
+                    style={{...styles.img, marginLeft: responsiveWidth(2)}}
+                  />
+                </View>
+                <View style={styles.calendarTextContainer}>
+                  <Text style={styles.calendarText}>
+                    {date ? date : 'MM-DD-YYYY'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <Text
+              style={[styles.headingText, {marginTop: responsiveHeight(3)}]}>
+              To Date
+            </Text>
+            <View
+              style={{
+                ...styles.calendarDateContainer,
+                backgroundColor: 'rgba(0,0,0,0.05)',
+              }}>
+              <TouchableOpacity
+                disabled={true}
+                style={styles.touch}
+                activeOpacity={0.5}
+                onPress={showCalendarHandler}>
+                <View style={styles.imageContainer}>
+                  <Image
+                    source={require('../../assets/Icons/calendar-blue.png')}
+                    resizeMode="contain"
+                    style={{...styles.img, marginLeft: responsiveWidth(2)}}
+                  />
+                </View>
+                <View style={styles.calendarTextContainer}>
+                  <Text style={styles.calendarText}>
+                    {date
+                      ? moment(date, 'MM-DD-YYYY')
+                          .add(6, 'month')
+                          .format('MM-DD-YYYY')
+                      : 'MM-DD-YYYY'}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <BorderBtn
+              disable={date ? false : true}
+              buttonText="Download for $29.99"
+              onClick={downloadJournal}
+              containerStyle={styles.button}
+            />
+          </Wrapper>
         </View>
       </View>
       {showCalendar && (
@@ -112,29 +136,40 @@ const styles = StyleSheet.create({
   },
   subContainer: {
     flex: 1,
+    alignItems: 'center',
     width: responsiveWidth(95),
   },
+  wrapper: {
+    marginTop: responsiveHeight(4),
+    width: '94%',
+  },
   calendarDateContainer: {
-    marginTop: responsiveHeight(2),
+    marginTop: responsiveHeight(1),
     paddingVertical: responsiveHeight(0.2),
     elevation: 2,
     shadowColor: globalStyles.shadowColor,
     shadowOffset: {width: 0, height: 0},
-    shadowOpacity: 0.6,
-    shadowRadius: 3,
+    shadowOpacity: 0.7,
+    shadowRadius: 2,
     backgroundColor: 'white',
     borderRadius: responsiveWidth(2),
+  },
+  headingText: {
+    alignSelf: 'flex-start',
+    marginLeft: '5%',
+    fontSize: responsiveFontSize(2.2),
+    color: 'rgba(0,0,0,0.7)',
   },
   touch: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     height: responsiveHeight(6),
-    width: '100%',
+    width: '90%',
   },
   calendarTextContainer: {
     paddingHorizontal: responsiveWidth(3),
-    width: '70%',
+    width: '88%',
   },
   calendarText: {
     fontSize: responsiveHeight(2),
@@ -143,7 +178,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    width: '20%',
+    width: '10%',
   },
   img: {
     height: '50%',
@@ -151,7 +186,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: responsiveHeight(4),
-    width: '100%',
+    marginBottom: responsiveHeight(5),
+    width: '70%',
   },
   calendarContainer: {
     position: 'absolute',

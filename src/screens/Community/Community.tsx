@@ -60,8 +60,8 @@ const Community = () => {
     React.useState<boolean>(false);
 
   React.useEffect(() => {
-    setShowSkeleton(true);
-    if (focused || reload) {
+    if (focused && saerchValue) {
+      setShowSkeleton(true);
       setCommunityList([]);
       setSearchValue('');
       pagination.currentPage = 1;
@@ -69,16 +69,17 @@ const Community = () => {
       pagination.loader = false;
       getInitialData();
     }
-  }, [focused, reload]);
+  }, [focused]);
 
-  // React.useEffect(() => {
-  //   setCommunityList([]);
-  //   setSearchValue('');
-  //   pagination.currentPage = 1;
-  //   pagination.lastPage = 1;
-  //   pagination.loader = false;
-  //   getInitialData();
-  // }, [reload]);
+  React.useEffect(() => {
+    setShowSkeleton(true);
+    setCommunityList([]);
+    setSearchValue('');
+    pagination.currentPage = 1;
+    pagination.lastPage = 1;
+    pagination.loader = false;
+    getInitialData();
+  }, [reload]);
 
   const getInitialData = async () => {
     getCommunityList(true);

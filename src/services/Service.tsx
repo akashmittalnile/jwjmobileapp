@@ -72,7 +72,8 @@ export const endPoint = {
   cardList: 'card-list',
   clearNotifications: 'clear-notifications',
   notificationCount: 'notification-count',
-  notificationSeen: 'notification-seen'
+  notificationSeen: 'notification-seen',
+  buyJournalPdf: 'buy-journal-pdf',
 };
 
 const loginHandler = async (message: string) => {

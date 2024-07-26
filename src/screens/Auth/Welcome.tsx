@@ -10,6 +10,8 @@ import KeyboardAvoidingViewWrapper from '../../components/Wrapper/KeyboardAvoidi
 import BgImage from '../../components/BgImage/BgImage';
 import {globalStyles} from '../../utils/constant';
 import BorderBtn from '../../components/Button/BorderBtn';
+import BorderLessBtn from '../../components/Button/BorderLessBtn';
+import ScreenNames from '../../utils/ScreenNames';
 
 const Welcome = () => {
   const navigation = useNavigation();
@@ -113,38 +115,47 @@ const Welcome = () => {
             By Creating Your Account You Agree To Our{' '}
           </Text>
           <View style={{flexDirection: 'row'}}>
-            <Text
-              style={{
+            <BorderLessBtn
+              onClick={() => {
+                navigation.navigate(ScreenNames.TermAndCondition);
+              }}
+              buttonText="Terms Of Use"
+              buttonTextStyle={{
                 color: 'black',
                 fontSize: responsiveFontSize(1.4),
                 fontWeight: '600',
-              }}>
-              Terms Of Use
-            </Text>
+              }}
+              containerStyle={{height: 'auto', width: 'auto'}}
+            />
             <Text
               style={{
                 color: 'black',
                 fontSize: responsiveFontSize(1.4),
-              }}> & Confirm You Have Read Our</Text>
-            <Text
-              style={{
-                color: 'black',
-                fontSize: responsiveFontSize(1.4),
-                fontWeight: '600',
               }}>
               {' '}
-              Privacy{' '}
+              & Confirm You Have Read Our
             </Text>
+            <BorderLessBtn
+              onClick={() => {}}
+              buttonText=" Privacy"
+              buttonTextStyle={{
+                color: 'black',
+                fontSize: responsiveFontSize(1.4),
+                fontWeight: '600',
+              }}
+              containerStyle={{height: 'auto', width: 'auto'}}
+            />
           </View>
-          <Text
-            style={{
+          <BorderLessBtn
+            onClick={() => {}}
+            buttonText="  Policy"
+            buttonTextStyle={{
               color: 'black',
               fontSize: responsiveFontSize(1.4),
               fontWeight: '600',
-            }}>
-            {' '}
-            Policy
-          </Text>
+            }}
+            containerStyle={{height: 'auto', width: 'auto'}}
+          />
         </View>
       </View>
     </KeyboardAvoidingViewWrapper>

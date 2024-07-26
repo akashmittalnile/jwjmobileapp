@@ -23,6 +23,9 @@ import IconTab from '../../components/Tab/IconTab';
 import userPic from '../../assets/Icons/user.png';
 import emailIcon from '../../assets/Icons/email.png';
 import callIcon from '../../assets/Icons/call.png';
+import followedCommunityIcon from '../../assets/Icons/global-search.png';
+import sharedRouitneNumberIcon from '../../assets/Icons/share-routine-number.png';
+import downloadIcon from '../../assets/Icons/download-white.png';
 import TextWithIcon from '../../components/CustomText/TextWithIcon';
 import BorderBtn from '../../components/Button/BorderBtn';
 import {globalStyles} from '../../utils/constant';
@@ -41,6 +44,34 @@ import {
 } from '../../utils/Method';
 import MonthYearCalendar from '../../components/Calendar/MonthYearCalendar';
 
+const Card = ({
+  onPress,
+  text,
+  IconUri,
+  number,
+}: {
+  onPress: any;
+  text: any;
+  IconUri: any;
+  number: any;
+}) => {
+  return (
+    <View style={styles.communityContainer}>
+      <TouchableOpacity onPress={onPress}>
+        <Image
+          source={{uri: IconUri}}
+          style={styles.img}
+          resizeMode="contain"
+        />
+        <Text style={styles.text}>{text}</Text>
+        <View>
+          <Text style={styles.number}>{number ? number : 0}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
 const Profile = () => {
   const navigation = useNavigation();
   const userDetails = useAppSelector(state => state.userDetails);
@@ -56,6 +87,9 @@ const Profile = () => {
   const callIconPath = Image.resolveAssetSource(callIcon).uri;
   const [logoutLoader, setLogoutLoader] = React.useState<boolean>(false);
   const [sharedRoutineCount, setShareddRoutineCount] = React.useState<
+    number | undefined
+  >();
+  const [totalJournalDownload, setTotalJournalDownload] = React.useState<
     number | undefined
   >();
   const [moodData, setMoodData] = React.useState<any[]>([]);
@@ -82,6 +116,7 @@ const Profile = () => {
     getProfileData();
     getFollowedCommunityCount();
     getSharedroutineCount();
+    getDownloadJournalData();
   };
 
   const getProfileData = async () => {
@@ -115,6 +150,19 @@ const Profile = () => {
       const response = await GetApiWithToken(endPoint.shareRoutineList, token);
       if (response?.data?.status) {
         setShareddRoutineCount(response?.data?.data?.data?.length);
+      }
+    } catch (err: any) {
+      console.log('err in profile', err?.message);
+    } finally {
+      setshouldRefresh(false);
+    }
+  };
+
+  const getDownloadJournalData = async () => {
+    try {
+      const response = await GetApiWithToken(endPoint.journalPdf, token);
+      if (response?.data?.status) {
+        setTotalJournalDownload(response?.data?.data?.length);
       }
     } catch (err: any) {
       console.log('err in profile', err?.message);
@@ -212,8 +260,9 @@ const Profile = () => {
       <HomeHeader />
       <View style={styles.subContainer}>
         <ScrollView
-          contentContainerStyle={{paddingBottom: responsiveHeight(16)}}
+          contentContainerStyle={{paddingBottom: responsiveHeight(17)}}
           showsVerticalScrollIndicator={false}
+          nestedScrollEnabled={true}
           refreshControl={
             <RefreshControl refreshing={shouldRefresh} onRefresh={onRefresh} />
           }>
@@ -424,41 +473,32 @@ const Profile = () => {
 
           {/* lower section */}
           <View style={styles.communityAndMessageBox}>
-            <View style={styles.communityContainer}>
-              <TouchableOpacity
+            <ScrollView horizontal={true} style={styles.flatlist}>
+              <Card
+                text="Followed Community"
                 onPress={() => {
                   navigation.navigate(ScreenNames.FollowedCommunity);
-                }}>
-                <Image
-                  source={require('../../assets/Icons/global-search.png')}
-                  style={styles.img}
-                  resizeMode="contain"
-                />
-                <Text style={styles.text}>Followed Community</Text>
-                <View>
-                  <Text style={styles.number}>{followedCommunity}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.communityContainer}>
-              <TouchableOpacity
+                }}
+                IconUri={Image.resolveAssetSource(followedCommunityIcon)?.uri}
+                number={followedCommunity}
+              />
+              <Card
+                text="Shared Routines"
                 onPress={() => {
                   navigation.navigate(ScreenNames.SharedRoutine);
-                }}>
-                <Image
-                  source={require('../../assets/Icons/share-routine-number.png')}
-                  style={styles.img}
-                  resizeMode="contain"
-                />
-                <Text style={styles.text}>Shared Routine</Text>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Text style={styles.number}>
-                    {sharedRoutineCount ? sharedRoutineCount : 0}
-                  </Text>
-                  {/* <Text style={{ color: globalStyles.lightGray, textAlignVertical: 'center', marginLeft: responsiveWidth(1) }}>New</Text> */}
-                </View>
-              </TouchableOpacity>
-            </View>
+                }}
+                IconUri={Image.resolveAssetSource(sharedRouitneNumberIcon)?.uri}
+                number={sharedRoutineCount}
+              />
+              <Card
+                text="Downloaded Pdf"
+                onPress={() => {
+                  navigation.navigate(ScreenNames.DownloadedPdf);
+                }}
+                IconUri={Image.resolveAssetSource(downloadIcon)?.uri}
+                number={totalJournalDownload}
+              />
+            </ScrollView>
           </View>
         </ScrollView>
       </View>
@@ -542,7 +582,7 @@ const styles = StyleSheet.create({
   image: {
     height: '100%',
     width: '100%',
-    backgroundColor: '#add8e6'
+    backgroundColor: '#add8e6',
   },
   userName: {
     marginTop: responsiveHeight(0.5),
@@ -586,12 +626,13 @@ const styles = StyleSheet.create({
   },
   flatlist: {},
   communityAndMessageBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
+    flex: 1,
+    // justifyContent: 'space-between',
+    // width: '100%',
   },
   communityContainer: {
-    width: '48%',
+    marginRight: responsiveWidth(3),
+    width: responsiveWidth(38),
     backgroundColor: 'white',
     elevation: 3,
     borderRadius: responsiveWidth(2),

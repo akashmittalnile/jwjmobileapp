@@ -47,7 +47,7 @@ const BottomTab = () => {
         })}
       />
       <Tab.Screen
-        name="Routine"
+        name="Routines"
         component={Routine}
         options={() => ({
           tabBarItemStyle: {

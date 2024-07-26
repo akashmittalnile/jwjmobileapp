@@ -246,13 +246,13 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
         style={[styles.calendar, containerStyle]}
         onMonthChange={monthHandler}
       />
-      <Modal animationType="slide" transparent={true} visible={showModal}>
+      {/* <Modal animationType="slide" transparent={true} visible={showModal}>
         <TouchableOpacity
           onPress={() => {
             setShowModal(false);
           }}
           style={styles.modalContainer}></TouchableOpacity>
-      </Modal>
+      </Modal> */}
     </>
   );
 };

@@ -162,7 +162,7 @@ const Search = () => {
       showSkeleton && setShowSkeleton(false);
     }
   };
- console.log({search, date})
+//  console.log({search, date})
   return (
     <>
       <View style={styles.container}>
@@ -412,10 +412,10 @@ const styles = StyleSheet.create({
   subContainer: {
     flex: 1,
     width: responsiveWidth(95),
-    paddingTop: responsiveHeight(1.5),
+    // paddingTop: responsiveHeight(1.5),
   },
   searchBar: {
-    marginTop: 0,
+    marginTop: responsiveHeight(1.5),
     height: responsiveHeight(6),
   },
   calendarContainer: {

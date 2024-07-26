@@ -52,7 +52,7 @@ const toastConfig = {
       style={{
         height: 'auto',
         paddingVertical: responsiveHeight(1),
-        borderLeftColor: 'yellow',
+        borderLeftColor: '#FFDF00',
         minHeight: responsiveHeight(7),
       }}
       text1NumberOfLines={100}

@@ -8,6 +8,10 @@ import {
   responsiveWidth,
 } from 'react-native-responsive-dimensions';
 import {useRoute, RouteProp} from '@react-navigation/native';
+import {endPoint, GetApiWithToken} from '../../services/Service';
+import {useAppSelector} from '../../redux/Store';
+import WebView from 'react-native-webview';
+import SkeletonContainer from '../../components/Skeleton/SkeletonContainer';
 
 interface ParamsProps {
   privacy: boolean;
@@ -17,34 +21,47 @@ type TermAndConditionRouteProp = RouteProp<
   'privacy'
 >;
 const TermAndCondition = () => {
+  const token = useAppSelector(state => state.auth.token);
   const {params} = useRoute<TermAndConditionRouteProp>();
+  const [polocies, setPolicies] = React.useState<any>(undefined);
+  const [loader, setLoader] = React.useState<boolean>(false);
+  React.useEffect(() => {
+    getPolicies();
+  }, []);
+
+  const getPolicies = async () => {
+    try {
+      setLoader(true);
+      const response = await GetApiWithToken(endPoint.policies, token);
+      if (response?.data?.status) {
+        setPolicies(response?.data?.data);
+      }
+    } catch (err: any) {
+      setLoader(false);
+      console.log('err in getting policies', err?.message);
+    }
+  };
+
   return (
     <Container
-      headerText={params?.privacy ? 'Privacy Policy' : 'Terms & Conditions'}>
-      <Wrapper containerStyle={styles.wrapper}>
-        <Text style={styles.text}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Leo vel
-          fringilla est ullamcorper eget nulla. Gravida cum sociis natoque
-          penatibus et magnis. Nunc eget lorem dolor sed. Aenean euismod
-          elementum nisi quis. Non quam lacus suspendisse faucibus interdum
-          posuere. Condimentum vitae sapien pellentesque habitant morbi. Diam
-          vulputate ut pharetra sit amet. At lectus urna duis convallis
-          convallis tellus id interdum velit. Vel quam elementum pulvinar etiam.
-          Sagittis eu volutpat odio facilisis. Egestas pretium aenean pharetra
-          magna ac placerat vestibulum lectus mauris. At volutpat diam ut
-          venenatis tellus in metus vulputate. Imperdiet sed euismod nisi porta
-          lorem mollis aliquam ut. Viverra mauris in aliquam sem fringilla ut
-          morbi tincidunt augue. Semper feugiat nibh sed pulvinar. Pulvinar
-          neque laoreet suspendisse interdum. Sed viverra ipsum nunc aliquet
-          bibendum. Sed libero enim sed faucibus turpis. Interdum varius sit
-          amet mattis vulputate enim. Non blandit massa enim nec dui nunc.
-          Fermentum leo vel orci porta non pulvinar neque. Habitant morbi
-          tristique senectus et netus. Sollicitudin tempor id eu nisl nunc mi
-          ipsum faucibus. Nisi lacus sed viverra tellus in hac habitasse. Enim
-          nunc faucibus a pellentesque sit. Sit amet nisl suscipit adipiscing.
-        </Text>
-      </Wrapper>
+      headerText={params?.privacy ? 'Privacy Policy' : 'Terms & Conditions'}
+      style={styles.container}
+      subContainerStyle={styles.subContainerStyle}
+      reloadOnScroll={false}>
+      {!polocies && <SkeletonContainer />}
+      {polocies && (
+        <WebView
+          source={{
+            uri: params?.privacy
+              ? polocies?.['privacy-policy']
+              : polocies?.['term-condition'],
+          }}
+          style={styles.webView}
+          onLoadEnd={() => {
+            setLoader(false);
+          }}
+        />
+      )}
     </Container>
   );
 };
@@ -52,18 +69,13 @@ const TermAndCondition = () => {
 export default TermAndCondition;
 
 const styles = StyleSheet.create({
-  wrapper: {
-    width: '100%',
-    paddingTop: responsiveHeight(0),
-    borderRadius: responsiveWidth(2),
+  container: {
+    flex: 1,
   },
-  text: {
-    paddingVertical: responsiveHeight(1),
-    paddingHorizontal: responsiveWidth(3),
-    fontSize: responsiveFontSize(1.6),
-    color: 'black',
-    fontWeight: '400',
-    letterSpacing: 1,
-    lineHeight: responsiveHeight(2.5),
+  subContainerStyle: {
+    width: responsiveWidth(100),
+  },
+  webView: {
+    height: responsiveHeight(90),
   },
 });

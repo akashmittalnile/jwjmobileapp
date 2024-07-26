@@ -43,6 +43,7 @@ import Calendar from '../screens/Calendar/Calendar';
 import DownloadJournal from '../screens/Journals/DownloadJournal';
 import ScreenNames from '../utils/ScreenNames';
 import {userDetailsHandler} from '../redux/UserDetails';
+import DownloadedPdf from '../screens/Pdf/DownloadedPdf';
 
 const Stack = createNativeStackNavigator();
 
@@ -251,6 +252,10 @@ const MainNavigation = () => {
           <Stack.Screen
             name={ScreenNames.DownloadJournal}
             component={DownloadJournal}
+          />
+          <Stack.Screen
+            name={ScreenNames.DownloadedPdf}
+            component={DownloadedPdf}
           />
         </>
       )}

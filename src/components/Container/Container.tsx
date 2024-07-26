@@ -92,6 +92,6 @@ const styles = StyleSheet.create({
   subContainer: {
     flex: 1,
     width: responsiveWidth(95),
-    paddingTop: responsiveHeight(1.5),
+    // paddingTop: responsiveHeight(1.5),
   },
 });

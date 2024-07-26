@@ -46,7 +46,8 @@ const ScreenNames = {
   Search: 'Search',
   MemberList: 'MemberList',
   Calendar: 'Calendar',
-  DownloadJournal: 'DownloadJournal'
+  DownloadJournal: 'DownloadJournal',
+  DownloadedPdf: 'DownloadedPdf'
 };
 
 export default ScreenNames;

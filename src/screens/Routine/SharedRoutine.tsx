@@ -72,10 +72,11 @@ const SharedRoutine = () => {
   return (
     <KeyboardAvoidingView style={{flex: 1}}>
       <Container
-        headerText="Shared Routine"
+        headerText="Shared Routines"
         scrollViewContentContainerStyle={{
+          paddingTop: responsiveHeight(1.5),
           paddingBottom: responsiveHeight(8),
-          height: '100%',
+          // height: '100%',
         }}>
         <View style={styles.searchBarContainer}>
           <SearchBarWithInsideIcon

@@ -14,7 +14,6 @@ let purchaseErrorSubscription: any = null;
 
 export const subscribedToSubscriptionListener = async (callback: Function) => {
   initConnection();
-  RNIap?.initIAP();
   await getSubscriptions({
     skus: [
       'prod_PVqNani9ws1r6k',

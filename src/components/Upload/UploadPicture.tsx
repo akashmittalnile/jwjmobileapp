@@ -18,6 +18,7 @@ import {
   responsiveFontSize,
 } from 'react-native-responsive-dimensions';
 import FastImage from 'react-native-fast-image';
+import Toast from 'react-native-toast-message';
 
 interface UploadPictureProps {
   onClick: (result: any) => void;
@@ -53,22 +54,29 @@ const UploadPicture: React.FC<UploadPictureProps> = ({
       setImageUrl(uri);
     }
   }, [uri]);
-
   const imagePicker = async () => {
     try {
+      if (imageUrl?.length === 3) {
+        Toast.show({
+          type: 'info',
+          text1: 'Max three images are allowed at a time',
+        });
+        return;
+      }
       const result = cropingDetails?.height
         ? await ImagePicker.openPicker({
             ...cropingDetails,
             multiple: multipleImage,
-            maxFiles: 100,
-            forceJpg: true
+            maxFiles: 3 - imageUrl?.length,
+            forceJpg: true,
           })
         : await ImagePicker.openPicker({
             width: responsiveHeight(30),
             height: responsiveHeight(30),
             cropping: true,
             multiple: multipleImage,
-            forceJpg: true
+            forceJpg: true,
+            maxFiles: 3 - imageUrl?.length,
           });
       // for (let i = 0; Array.isArray(result) && i < result?.length; i++) {
       //   if (Platform.OS === 'ios') {

@@ -50,7 +50,7 @@ const Payment = (props: any) => {
   const dispatch = useAppDispatch();
   const scrollRef = React.useRef(null);
   const token = useAppSelector(state => state.auth.token);
-  const homeReload = useAppSelector(state => state.reload.Home);
+  const reload = useAppSelector(state => state.reload);
   const {params} = useRoute<PaymentRouteProps>();
   const [card, setCard] = useState(CardFieldInput.Details | null);
   const [addpayment, setaddpayment] = useState(false);
@@ -115,7 +115,8 @@ const Payment = (props: any) => {
         );
         if (response?.data?.status) {
           const result = await fetchPdf(response?.data?.data);
-          if(result){
+          if (result) {
+            dispatch(reloadHandler({[ScreenNames.Profile]: !reload?.Profile}));
             navigation.navigate(ScreenNames.Journals);
           }
         }
@@ -162,7 +163,7 @@ const Payment = (props: any) => {
         const response = await PostApiWithToken(endPoint.buyPlan, data, token);
         if (response?.data?.status) {
           // getpaymentList();
-          dispatch(reloadHandler({[ScreenNames.Home]: !homeReload}));
+          dispatch(reloadHandler({[ScreenNames.Home]: !reload?.Home}));
           addpayment && setaddpayment(false);
           navigation.navigate(ScreenNames.Home);
         }

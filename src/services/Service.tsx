@@ -74,6 +74,8 @@ export const endPoint = {
   notificationCount: 'notification-count',
   notificationSeen: 'notification-seen',
   buyJournalPdf: 'buy-journal-pdf',
+  journalPdf: 'journal-pdf',
+  policies: 'policies'
 };
 
 const loginHandler = async (message: string) => {

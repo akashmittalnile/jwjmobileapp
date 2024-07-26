@@ -468,11 +468,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
   },
   subContainer: {
-    marginTop: responsiveHeight(2),
+    // marginTop: responsiveHeight(2),
     height: responsiveHeight(85),
     width: responsiveWidth(95),
   },
   searchAndDropdownContainer: {
+    marginTop: responsiveHeight(1.5),
     width: '100%',
   },
   search: {

@@ -347,7 +347,10 @@ const AddNewPost = () => {
           </View>
           <View style={styles.termsTextContainer}>
             <Text style={styles.termText}>I accept</Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                // navigation.navigate(ScreenNames.TermAndCondition);
+              }}>
               <Text
                 style={{
                   ...styles.termText,

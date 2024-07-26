@@ -186,6 +186,7 @@ const FollowedCommunity = () => {
             style={{
               height: responsiveHeight(85),
             }}
+            contentContainerStyle={{paddingBottom:responsiveHeight(5)}}
             keyExtractor={(_, index) => index?.toString()}
             onEndReachedThreshold={0.5}
             onEndReached={() => {

@@ -1,4 +1,11 @@
-import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 import Wrapper from '../Wrapper/Wrapper';
 import {
@@ -48,6 +55,7 @@ const PdfCard: React.FC<PdfCardProps> = ({pdfLink, startDate, paymentDate}) => {
         type: 'error',
         text1: 'Pdf loading failed',
       });
+      closePdf();
     }, 1000);
   };
 
@@ -118,18 +126,21 @@ const PdfCard: React.FC<PdfCardProps> = ({pdfLink, startDate, paymentDate}) => {
           <Pdf
             source={{
               uri: pdfLink,
-              cache: true,
             }}
             onLoadComplete={onPdfLoad}
             onPageChanged={(page, numberOfPages) => {
               console.log(`Current page: ${page}`);
             }}
+            // onLoadProgress={percent => {}}
             onError={onPdfLoadError}
             onPressLink={uri => {
               console.log(`Link pressed: ${uri}`);
             }}
             style={styles.pdf}
             enablePaging={true}
+            renderActivityIndicator={() => (
+              <ActivityIndicator size="large" color={globalStyles.themeBlue} />
+            )}
           />
         </View>
       </Modal>

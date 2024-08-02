@@ -20,15 +20,19 @@ import FastImage from 'react-native-fast-image';
 import {moodColorHandler} from '../../utils/Method';
 
 interface TodayMoodProps {
+  heading?: string;
   loader?: boolean;
   onPress: (mood: string) => void;
   disableModal: () => void;
+  disableButton?: boolean;
 }
 
 const TodayMood: React.FC<TodayMoodProps> = ({
+  heading,
   onPress,
   disableModal,
   loader = false,
+  disableButton = false,
 }) => {
   const moodData = useAppSelector(state => state.mood);
   const moodHandler = (id: string) => {
@@ -41,7 +45,7 @@ const TodayMood: React.FC<TodayMoodProps> = ({
   const renderMood = ({item, index}: {item: any; index: number}) => {
     return (
       <TouchableOpacity
-        disabled={loader}
+        disabled={loader || disableButton}
         key={item?.id.toString() + index}
         style={styles.touch}
         onPress={() => {
@@ -75,7 +79,9 @@ const TodayMood: React.FC<TodayMoodProps> = ({
           )}
           {loader && <ActivityIndicator color={globalStyles.themeBlue} />}
         </TouchableOpacity>
-        <Text style={styles.heading}>How Are You Feeling Today?</Text>
+        <Text style={styles.heading}>
+          {heading ? heading : 'How Are You Feeling Today?'}
+        </Text>
         <View style={styles.buttonsContainer}>
           <FlatList
             data={moodData}

@@ -120,7 +120,7 @@ const Community = () => {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={styles.communityContainer}>
+      {/* <View style={styles.communityContainer}>
         <TouchableOpacity
           onPress={() => {
             goToScreenHandler('Chat');
@@ -136,7 +136,7 @@ const Community = () => {
             <Text style={styles.number}>{unSeenMessage}</Text>
           </View>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
   );
   const createCommunityHandler = () => {
@@ -494,7 +494,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   communityContainer: {
-    width: '30%',
+    width: '48%',
+    // width: '30%',
     backgroundColor: 'white',
     elevation: 3,
     borderRadius: responsiveWidth(2),

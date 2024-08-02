@@ -39,9 +39,14 @@ const DownloadJournal = () => {
     <>
       <View style={styles.mainContainer}>
         <View style={styles.headerContainer}>
-          <Header title="Download Journal" notificationButton={false} />
+          <Header title="Print Pdf" notificationButton={false} />
         </View>
         <View style={styles.subContainer}>
+          <Text style={styles.heading}>
+            This is an opportunity for you to create a legacy for your future
+            generations. You can download a six month span into a printable PDF
+            file.
+          </Text>
           <Wrapper containerStyle={styles.wrapper}>
             <Text style={styles.headingText}>From Date</Text>
             <View style={styles.calendarDateContainer}>
@@ -97,7 +102,7 @@ const DownloadJournal = () => {
             </View>
             <BorderBtn
               disable={date ? false : true}
-              buttonText="Download for $29.99"
+              buttonText="Print Pdf for $29.99"
               onClick={downloadJournal}
               containerStyle={styles.button}
             />
@@ -140,8 +145,15 @@ const styles = StyleSheet.create({
     width: responsiveWidth(95),
   },
   wrapper: {
-    marginTop: responsiveHeight(4),
+    marginTop: responsiveHeight(2),
     width: '94%',
+  },
+  heading: {
+    marginTop: responsiveHeight(2),
+    paddingHorizontal: responsiveWidth(2),
+    fontSize: responsiveFontSize(1.7),
+    fontWeight: '400',
+    textAlign: 'center',
   },
   calendarDateContainer: {
     marginTop: responsiveHeight(1),
@@ -157,7 +169,7 @@ const styles = StyleSheet.create({
   headingText: {
     alignSelf: 'flex-start',
     marginLeft: '5%',
-    fontSize: responsiveFontSize(2.2),
+    fontSize: responsiveFontSize(1.8),
     color: 'rgba(0,0,0,0.7)',
   },
   touch: {
@@ -172,7 +184,7 @@ const styles = StyleSheet.create({
     width: '88%',
   },
   calendarText: {
-    fontSize: responsiveHeight(2),
+    fontSize: responsiveHeight(1.8),
   },
   imageContainer: {
     justifyContent: 'center',

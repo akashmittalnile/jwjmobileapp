@@ -156,6 +156,10 @@ const MainNavigation = () => {
             name={ScreenNames.SubscriptionPlans}
             component={SubscriptionPlans}
           />
+            <Stack.Screen
+            name={ScreenNames.TermAndCondition}
+            component={TermAndCondition}
+          />
         </>
       ) : (
         <>

@@ -94,13 +94,14 @@ const AllComments = () => {
         const temp = [];
         const data = response?.data?.data?.comments;
         for (let i = 0; i < data?.length; i++) {
+          console.log(data[i]);
           temp.push(
             <CommentTab
               key={i}
               id={data[i]?.comment_id}
               replyHandler={replyingHandler}
               comment={data[i]?.comment}
-              name={data[i]?.posted_by}
+              name={data[i]?.posted_by_user_name}
               date={data[i]?.posted_date}
               imageUri={data[i]?.posted_by_profile_image}
               style={{marginBottom: responsiveHeight(1)}}
@@ -117,7 +118,7 @@ const AllComments = () => {
                 id={item?.reply_id}
                 replyHandler={replyingHandler}
                 comment={item?.reply_comment}
-                name={item?.reply_posted_by}
+                name={item?.reply_posted_by_user_name}
                 date={item?.reply_posted_date}
                 imageUri={item?.reply_posted_by_profile_image}
                 style={{marginBottom: responsiveHeight(1)}}
@@ -277,7 +278,14 @@ const AllComments = () => {
                   marginTop: responsiveHeight(20),
                   width: '100%',
                 }}>
-                  <Image source={require('../../assets/Icons/no-data-found.png')} resizeMode='contain' style={{height: responsiveHeight(15), width: responsiveWidth(30)}} />
+                <Image
+                  source={require('../../assets/Icons/no-data-found.png')}
+                  resizeMode="contain"
+                  style={{
+                    height: responsiveHeight(15),
+                    width: responsiveWidth(30),
+                  }}
+                />
                 <Text
                   style={{
                     fontSize: responsiveFontSize(2.5),
@@ -422,7 +430,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: responsiveWidth(5),
     height: '100%',
     backgroundColor: 'white',
-    color: 'black'
+    color: 'black',
   },
   commentBtn: {
     flex: 2,

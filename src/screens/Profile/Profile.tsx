@@ -25,7 +25,7 @@ import emailIcon from '../../assets/Icons/email.png';
 import callIcon from '../../assets/Icons/call.png';
 import followedCommunityIcon from '../../assets/Icons/global-search.png';
 import sharedRouitneNumberIcon from '../../assets/Icons/share-routine-number.png';
-import downloadIcon from '../../assets/Icons/download-white.png';
+import downloadIcon from '../../assets/Icons/print-blue.png';
 import TextWithIcon from '../../components/CustomText/TextWithIcon';
 import BorderBtn from '../../components/Button/BorderBtn';
 import {globalStyles} from '../../utils/constant';
@@ -491,7 +491,7 @@ const Profile = () => {
                 number={sharedRoutineCount}
               />
               <Card
-                text="Downloaded Pdf"
+                text="Printed Pdf"
                 onPress={() => {
                   navigation.navigate(ScreenNames.DownloadedPdf);
                 }}

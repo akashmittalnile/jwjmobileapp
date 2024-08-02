@@ -186,6 +186,7 @@ const AddNewPost = () => {
           }
         }
         const response = await PostApiWithToken(_endpoint, data, token);
+        // console.log(response)
         if (response?.data?.status) {
           dispatch(
             reloadHandler({
@@ -349,7 +350,7 @@ const AddNewPost = () => {
             <Text style={styles.termText}>I accept</Text>
             <TouchableOpacity
               onPress={() => {
-                // navigation.navigate(ScreenNames.TermAndCondition);
+                navigation.navigate(ScreenNames.TermAndCondition);
               }}>
               <Text
                 style={{
@@ -384,6 +385,7 @@ export default AddNewPost;
 
 const styles = StyleSheet.create({
   title: {
+    marginTop: responsiveHeight(1.5),
     height: responsiveHeight(7),
     width: '100%',
     borderWidth: responsiveWidth(0.2),

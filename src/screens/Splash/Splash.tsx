@@ -49,6 +49,7 @@ const Splash = () => {
   const checkPlanDetails = async (token: string) => {
     try {
       const response = await GetApiWithToken(endPoint.profile, token);
+      console.log(response?.data)
       if (response?.data?.status) {
         if (!response?.data?.data?.current_plan?.name) {
           dispatch(authHandler(token));

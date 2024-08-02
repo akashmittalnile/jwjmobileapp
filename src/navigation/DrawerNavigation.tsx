@@ -72,6 +72,7 @@ const DrawerNavigation = () => {
     try {
       setLogoutLoader(true);
       const response = await GetApiWithToken(endPoint.logout, token);
+      console.log(response?.data)
       if (response?.data?.status) {
         await AsyncStorage.clear();
         setModalVisible(false);
@@ -169,6 +170,16 @@ const DrawerNavigation = () => {
               />
 
               <Tab
+                name="Print Pdf"
+                imageUri={require('../assets/Icons/print.png')}
+                onPress={() => {
+                  props.navigation.closeDrawer();
+                  props.navigation.navigate(ScreenNames.DownloadJournal);
+                }}
+                selected={false}
+              />
+
+              <Tab
                 name="Communities"
                 imageUri={require('../assets/Icons/community-white.png')}
                 onPress={() => {
@@ -183,7 +194,7 @@ const DrawerNavigation = () => {
                 imageUri={require('../assets/Icons/routine-white.png')}
                 onPress={() => {
                   props.navigation.closeDrawer();
-                  props.navigation.navigate(ScreenNames.Routine);
+                  props.navigation.navigate('Routines');
                 }}
                 selected={false}
               />
@@ -199,8 +210,8 @@ const DrawerNavigation = () => {
               />
 
               <Tab
-                name={`Messages ${
-                  unSeenMessage ? `(${unSeenMessage} New)` : ''
+                name={`Chat Support ${
+                  unSeenMessage ? `(${unSeenMessage})` : ''
                 }`}
                 // name={`Messages`}
                 imageUri={require('../assets/Icons/message-2.png')}
@@ -232,7 +243,7 @@ const DrawerNavigation = () => {
               }}
               selected={false}
             /> */}
-              <Tab
+              {/* <Tab
                 name="Terms & Conditions"
                 imageUri={require('../assets/Icons/stickynote.png')}
                 onPress={() => {
@@ -240,7 +251,7 @@ const DrawerNavigation = () => {
                   props.navigation.navigate(ScreenNames.TermAndCondition);
                 }}
                 selected={false}
-              />
+              /> */}
               <Tab
                 name="Privacy Policy"
                 imageUri={require('../assets/Icons/stickynote1.png')}
@@ -287,7 +298,9 @@ const DrawerNavigation = () => {
                   <TouchableOpacity
                     style={styles.touch}
                     onPress={() => {
-                      deepLinkHandler('https://youtube.com/@journeywithjournals?si=15wGuO5Sb5pLF9Wy');
+                      deepLinkHandler(
+                        'https://youtube.com/@journeywithjournals?si=15wGuO5Sb5pLF9Wy',
+                      );
                     }}>
                     <Image
                       resizeMode="contain"
@@ -452,12 +465,6 @@ const styles = StyleSheet.create({
     marginRight: responsiveWidth(3),
     height: responsiveHeight(2.5),
     width: responsiveHeight(2.5),
-  },
-  wrapper: {
-    marginTop: responsiveHeight(2),
-    paddingBottom: responsiveHeight(2),
-    width: '100%',
-    borderRadius: responsiveWidth(2),
   },
   wrapper: {
     marginTop: responsiveHeight(2),

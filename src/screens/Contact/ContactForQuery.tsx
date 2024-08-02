@@ -141,7 +141,7 @@ const ContactForQuery = () => {
             errors,
             touched,
           }) => (
-            <View>
+            <View style={{paddingTop: responsiveHeight(1.5)}}>
               <TextInputField
                 editable={false}
                 placeholder="Name"

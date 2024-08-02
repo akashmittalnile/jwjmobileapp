@@ -40,6 +40,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authHandler} from '../../redux/Auth';
 import {useAppDispatch} from '../../redux/Store';
 import {userDetailsHandler} from '../../redux/UserDetails';
+import PhoneInput from '../../components/PhoneInput/PhoneInput';
+import {USMobileNumberFormatHandler} from '../../utils/Method';
 
 const userIconPath = Image.resolveAssetSource(userIcon).uri;
 const userIconPath3 = Image.resolveAssetSource(userIcon3).uri;
@@ -58,6 +60,10 @@ const SignUp: React.FC<SignUpProps> = () => {
     React.useState<boolean>(false);
   const [loader, setLoader] = React.useState<boolean>(false);
   const [gender, setGender] = React.useState<string>('1');
+  const [phoneNumber, setPhoneNumber] = React.useState<{
+    mobile: string;
+    err: boolean;
+  }>({mobile: '', err: false});
 
   React.useEffect(() => {
     if (focused && !params?.emailVerified) {
@@ -67,6 +73,7 @@ const SignUp: React.FC<SignUpProps> = () => {
         user_name: '',
         email: '',
         password: '',
+        phoone_number: '',
       });
       formikRef.current?.setTouched({
         firstname: false,
@@ -109,6 +116,7 @@ const SignUp: React.FC<SignUpProps> = () => {
           email: values.email,
           id: params?.id,
           gender,
+          mobile: values?.phone_Number,
         });
         if (response?.data?.status) {
           await AsyncStorage.setItem(
@@ -178,6 +186,11 @@ const SignUp: React.FC<SignUpProps> = () => {
     setGender(value);
   };
 
+  const numberHandler = (text: string) => {
+    const number = USMobileNumberFormatHandler(text);
+    setPhoneNumber({err: false, mobile: number});
+  };
+
   return (
     <KeyboardAvoidingViewWrapper>
       <View style={styles.container}>
@@ -189,6 +202,7 @@ const SignUp: React.FC<SignUpProps> = () => {
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={values => {
+              console.log('clciked hegfigiufegiugefugeg')
               submitHandler(values);
             }}>
             {({
@@ -330,6 +344,29 @@ const SignUp: React.FC<SignUpProps> = () => {
                   disableButton={params?.emailVerified ? true : false}
                   editable={!params?.emailVerified ? true : false}
                 />
+                {/* <View
+                  style={{
+                    ...styles.phoneInputContainer,
+                  }}>
+                  <PhoneInput
+                    value={phoneNumber?.mobile}
+                    countryCode={data?.cca2}
+                    onChangeText={numberHandler}
+                    onCountryChange={country => {
+                      setData((preData: any) => ({
+                        ...preData,
+                        cca2: country?.cca2,
+                        countryCode: country?.callingCode[0],
+                      }));
+                    }}
+                    placeHolder="Contact number"
+                    maxLength={14}
+                    style={{...styles.phoneInput, borderColor: phoneNumber?.err ? 'red' : 'transparent'}}
+                  />
+                  <View style={styles.errContainer}>
+                    {errorText && <Text style={styles.errText}>{errorText}</Text>}
+                  </View>
+                </View> */}
                 <PasswordInput
                   value={values.password}
                   onChangeText={handleChange('password')}
@@ -452,5 +489,38 @@ const styles = StyleSheet.create({
   genderImage: {
     height: responsiveHeight(3.5),
     width: responsiveHeight(3.5),
+  },
+  phoneInputContainer: {
+    marginTop: responsiveHeight(1),
+    height: Platform.OS === 'ios' ? responsiveHeight(8) : responsiveHeight(10),
+    width: '95%',
+    borderRadius: responsiveWidth(2),
+    backgroundColor: 'white',
+  },
+  phoneInput: {
+    height: '80%',
+    ...Platform.select({
+      ios: {
+        shadowColor: globalStyles.shadowColor,
+        shadowOffset: {width: 0, height: 2},
+        shadowOpacity: 0.7,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 1.5,
+      },
+    }),
+    backgroundColor: 'white',
+    overflow: 'visible',
+    borderWidth: responsiveWidth(0.4),
+  },
+  errContainer: {
+    height: '25%',
+    paddingLeft: responsiveWidth(2),
+    paddingTop: responsiveHeight(0.1),
+  },
+  errText: {
+    color: 'red',
+    fontSize: responsiveFontSize(1.5),
   },
 });

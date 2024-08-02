@@ -1,6 +1,7 @@
 // export const baseURL = 'https://niletechinnovations.com/projects/journey/api/';
-export const baseURL = 'http://3.144.121.102/api/';
-import axios from 'axios';
+// export const baseURL = 'http://3.144.121.102/api/';
+export const baseURL = 'http://18.188.245.82/api/'
+// import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import {navigationRefHandler} from '../utils/Method';
@@ -75,7 +76,9 @@ export const endPoint = {
   notificationSeen: 'notification-seen',
   buyJournalPdf: 'buy-journal-pdf',
   journalPdf: 'journal-pdf',
-  policies: 'policies'
+  policies: 'policies',
+  routineComplete: 'routine-complete',
+  deleteNotification: 'notification-delete'
 };
 
 const loginHandler = async (message: string) => {

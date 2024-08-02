@@ -113,10 +113,12 @@ const UploadPicture: React.FC<UploadPictureProps> = ({
         if (multipleImage) {
           const _result = result?.map(item => ({
             ...item,
-            uri: Platform.OS === 'ios' ? item?.sourceURL : item?.path,
+            // uri: Platform.OS === 'ios' ? item?.sourceURL : item?.path,
+            uri: item?.path,
             type: item?.mime,
             filename:
-              Platform.OS === 'ios' ? item?.filename : item?.modificationDate,
+              // Platform.OS === 'ios' ? item?.filename : item?.modificationDate,
+              item.path.slice(item.path.lastIndexOf('/'), item.path.length),
           }));
           setImageUrl(preData => {
             return [...preData, ..._result];
@@ -126,22 +128,30 @@ const UploadPicture: React.FC<UploadPictureProps> = ({
       } else {
         onClick([
           {
-            uri: Platform.OS === 'ios' ? result?.sourceURL : result?.path,
+            // uri: Platform.OS === 'ios' ? result?.sourceURL : result?.path,
+            uri: result?.path,
             type: result?.mime,
-            filename:
-              Platform.OS === 'ios'
-                ? result?.filename
-                : result?.modificationDate,
+            filename: result.path.slice(
+              result.path.lastIndexOf('/'),
+              result.path.length,
+            ),
+            // Platform.OS === 'ios'
+            //   ? result?.filename
+            //   : result?.modificationDate,
           },
         ]);
         setImageUrl([
           {
-            uri: Platform.OS === 'ios' ? result?.sourceURL : result?.path,
+            // uri: Platform.OS === 'ios' ? result?.sourceURL : result?.path,
+            uri: result?.path,
             type: result?.mime,
-            filename:
-              Platform.OS === 'ios'
-                ? result?.filename
-                : result?.modificationDate,
+            filename: result.path.slice(
+              result.path.lastIndexOf('/'),
+              result.path.length,
+            ),
+            // Platform.OS === 'ios'
+            //   ? result?.filename
+            //   : result?.modificationDate,
           },
         ]);
       }

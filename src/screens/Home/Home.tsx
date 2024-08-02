@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import React from 'react';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {firebase} from '@react-native-firebase/firestore';
 import HomeHeader from '../../components/Header/HomeHeader';
 import Wrapper from '../../components/Wrapper/Wrapper';
 import {
@@ -45,7 +46,7 @@ import SkeletonContainer from '../../components/Skeleton/SkeletonContainer';
 import {notificationCounter, numberHandler} from '../../redux/TrackNumbers';
 import TodayMood from '../../components/Modal/TodayMood';
 import {err} from 'react-native-svg';
-import {resolveProfileImage} from '../../utils/Method';
+import {resolveProfileImage, triggerNotification} from '../../utils/Method';
 
 interface HomeData {
   mood: [{id: string; name: string; logo: string}];
@@ -96,13 +97,50 @@ const Home = () => {
     getHomeData();
     getNotificationCount();
     getUserDetails();
-    getUnseenMessage();
+    // getUnseenMessage();
     splashSliceHandler && dispatch(SplashScreenSliceHandler(false));
   }, [reloadHome]);
 
   React.useEffect(() => {
     getTodayMoodData();
   }, []);
+
+  React.useEffect(() => {
+    let unsubscribe = null;
+    if (_userDetails?.email) {
+      unsubscribe = firebase
+        ?.firestore()
+        .collection('jwj_chats')
+        .doc(`1-${_userDetails?.id}`)
+        .collection('messages')
+        ?.orderBy('createdAt', 'desc')
+        ?.onSnapshot((snapshot: any) => {
+          // console.log('chat',snapshot?._docs[0]?._data?.text)
+          getUnseenMessage(snapshot?._docs[0]?._data?.text);
+        });
+    }
+
+    // return () => {
+    //   console.log('chal gya shoaib');
+    //   unsubscribe && unsubscribe();
+    // };
+  }, [_userDetails?.email]);
+
+  const getUnseenMessage = async (message: string) => {
+    try {
+      const response = await GetApiWithToken(
+        endPoint.unseenMessageCount,
+        token,
+      );
+      if (response?.data?.status) {
+        console.log(response?.data?.data);
+        dispatch(numberHandler({unSeenMessage: response?.data?.data}));
+        // triggerNotification('New chat message', message);
+      }
+    } catch (err: any) {
+      console.log('err in unseen message api home screen', err?.message);
+    }
+  };
 
   const onRefresh = async () => {
     setshouldRefresh(true);
@@ -201,19 +239,19 @@ const Home = () => {
     }
   };
 
-  const getUnseenMessage = async () => {
-    try {
-      const response = await GetApiWithToken(
-        endPoint.unseenMessageCount,
-        token,
-      );
-      if (response?.data?.status) {
-        dispatch(numberHandler({unSeenMessage: response?.data?.data}));
-      }
-    } catch (err: any) {
-      console.log('err in unseen message api home screen', err?.message);
-    }
-  };
+  // const getUnseenMessage = async () => {
+  //   try {
+  //     const response = await GetApiWithToken(
+  //       endPoint.unseenMessageCount,
+  //       token,
+  //     );
+  //     if (response?.data?.status) {
+  //       dispatch(numberHandler({unSeenMessage: response?.data?.data}));
+  //     }
+  //   } catch (err: any) {
+  //     console.log('err in unseen message api home screen', err?.message);
+  //   }
+  // };
 
   const getTodayMoodHandler = (data: any) => {
     const date = new Date().getDate();
@@ -268,7 +306,7 @@ const Home = () => {
   };
 
   const goToRoutineBottomTabHandler = () => {
-    navigation.navigate(ScreenNames.Routine);
+    navigation.navigate('Routines');
   };
 
   const onFocusSearchBarHandler = () => {
@@ -384,13 +422,21 @@ const Home = () => {
                         }}>
                         {Array.isArray(homeData?.my_routine) &&
                         homeData?.my_routine?.length > 0 ? (
-                          <>
-                            {homeData?.my_routine?.length > 0 && (
-                              <RoutineHomeTab
-                                data={homeData?.my_routine[0] || {}}
-                              />
-                            )}
-                            {homeData?.my_routine?.length > 1 && (
+                          <View
+                            style={{
+                              height: responsiveHeight(40),
+                              width: '100%',
+                              paddingHorizontal: '2%',
+                            }}>
+                            <ScrollView>
+                              {homeData?.my_routine?.map((item, index) => (
+                                <RoutineHomeTab
+                                  key={index?.toString()}
+                                  data={item || {}}
+                                />
+                              ))}
+                            </ScrollView>
+                            {/* {homeData?.my_routine?.length > 1 && (
                               <RoutineHomeTab
                                 data={homeData?.my_routine[1] || {}}
                               />
@@ -399,8 +445,8 @@ const Home = () => {
                               <RoutineHomeTab
                                 data={homeData?.my_routine[2] || {}}
                               />
-                            )}
-                          </>
+                            )} */}
+                          </View>
                         ) : (
                           <>
                             <Image

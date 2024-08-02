@@ -296,13 +296,13 @@ const FollowedCommunityPost = () => {
           onPress={commentHandler}
           textStyle={styles.buttonTextStyle}
         />
-        <IconButton
+        {/* <IconButton
           text="Messages"
           iconUri={message2PathIcon}
           style={styles.iconButton}
           onPress={messageHandler}
           textStyle={styles.buttonTextStyle}
-        />
+        /> */}
       </View>
     </Container>
   );
@@ -315,6 +315,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   followedCommunityImageContainer: {
+    marginTop: responsiveHeight(1.5),
     height: responsiveHeight(25),
     width: '100%',
     borderRadius: responsiveWidth(2),
@@ -409,7 +410,8 @@ const styles = StyleSheet.create({
     height: responsiveHeight(3.5),
     borderWidth: responsiveWidth(0.2),
     borderColor: globalStyles.themeBlue,
-    width: '32%',
+    // width: '32%',
+    width: '48%'
   },
   buttonTextStyle: {
     fontSize: responsiveFontSize(1.3),

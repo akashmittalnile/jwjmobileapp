@@ -90,7 +90,6 @@ export const triggerNotification = async (
   scheduleTime: string = '',
 ) => {
   try {
-    console.log('1');
     if (Platform.OS === 'android') {
       const result = await PermissionsAndroid?.request(
         PermissionsAndroid?.PERMISSIONS?.POST_NOTIFICATIONS,

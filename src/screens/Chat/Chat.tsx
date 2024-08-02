@@ -292,13 +292,13 @@ const Chat = () => {
               placeholder="Type message"
               placeholderTextColor="gray"
             />
-            <TouchableOpacity style={styles.touch} onPress={documentPicker}>
+            {/* <TouchableOpacity style={styles.touch} onPress={documentPicker}>
               <Image
                 source={require('../../assets/Icons/attached.png')}
                 resizeMode="contain"
                 style={styles.attachedFiles}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           <View style={styles.sendButtonContainer}>
             <TouchableOpacity

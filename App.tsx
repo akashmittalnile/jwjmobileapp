@@ -1,5 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {StatusBar, Platform} from 'react-native';
+import {
+  StatusBar,
+  Platform,
+  Modal,
+  StyleSheet,
+  View,
+  Text,
+  Alert,
+} from 'react-native';
 import {Provider} from 'react-redux';
 import {store} from './src/redux/Store';
 import {NavigationContainer} from '@react-navigation/native';
@@ -15,9 +23,16 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {StripeProvider} from '@stripe/stripe-react-native';
 import messaging from '@react-native-firebase/messaging';
 import {triggerNotification} from './src/utils/Method';
-import {notificationCounter} from './src/redux/TrackNumbers';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
+import {notificationCounter, numberHandler} from './src/redux/TrackNumbers';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
 import {firebase} from '@react-native-firebase/firestore';
+import {endPoint, GetApiWithToken} from './src/services/Service';
+import {globalStyles} from './src/utils/constant';
+import BorderBtn from './src/components/Button/BorderBtn';
 
 const toastConfig = {
   success: (props: any) => (
@@ -62,20 +77,25 @@ const toastConfig = {
 };
 
 function App(): React.ReactElement {
-  const [isInternetReachable, setIsInternetReachable] = useState<
-    boolean | null
-  >(true);
-  const [showNoInternet, setShowNoInternet] = useState<boolean | null>(false);
+  const [isInternetReachable, setIsInternetReachable] = useState<boolean>(true);
+  const [showNoInternet, setShowNoInternet] = useState<boolean>(false);
 
   useEffect(() => {
-    const unsubscribeNetInfo = NetInfo.addEventListener(state => {
-      setIsInternetReachable(state.isInternetReachable ?? true);
-      setShowNoInternet(!state.isInternetReachable);
+    const unsubscribeNetInfo = NetInfo.addEventListener((state: any) => {
+      setIsInternetReachable(state.isInternetReachable && state.isConnected);
     });
-
     return () => unsubscribeNetInfo();
   }, []);
 
+  useEffect(() => {
+    if (isInternetReachable === false) {
+      setShowNoInternet(true);
+    } else {
+      setShowNoInternet(false);
+    }
+  }, [isInternetReachable]);
+
+  console.log({isInternetReachable, showNoInternet});
   useEffect(() => {
     requestUserPermission()
       .then(permissionGranted => {
@@ -97,23 +117,26 @@ function App(): React.ReactElement {
       });
   }, []);
 
-  React.useEffect(() => {
-    const unsubscribe = firebase
-      ?.firestore()
-      .collection('jwj_chats')
-      .doc(`1-${store?.getState().userDetails?.id}`)
-      .collection('messages')
-      ?.orderBy('createdAt', 'desc')
-      ?.limit(1)
-      ?.onSnapshot((snapshot: any) => {
-        // snapshot?._docs[0]?._data?.text &&
-        //   triggerNotification('New Message', snapshot?._docs[0]?._data?.text);
-      });
+  // React.useEffect(() => {
+  //   let unsubscribe = null;
+  //   if (store?.getState()?.auth?.token) {
+  //     console.log('rdfgh shoaib nile')
+  //     unsubscribe = firebase
+  //       ?.firestore()
+  //       .collection('jwj_chats')
+  //       .doc(`1-${store?.getState().userDetails?.id}`)
+  //       .collection('messages')
+  //       ?.orderBy('createdAt', 'desc')
+  //       ?.limit(1)
+  //       ?.onSnapshot((snapshot: any) => {
+  //         getUnseenMessage();
+  //       });
+  //   }
 
-    return () => {
-      unsubscribe();
-    };
-  }, [store?.getState().userDetails?.id]);
+  //   return () => {
+  //     unsubscribe && unsubscribe();
+  //   };
+  // }, [store?.getState()?.auth?.token]);
 
   const requestUserPermission = async (): Promise<boolean> => {
     try {
@@ -125,6 +148,33 @@ function App(): React.ReactElement {
     } catch (error) {
       console.log('Error requesting FCM permission:', error);
       return false;
+    }
+  };
+
+  // const getUnseenMessage = async () => {
+  //   try {
+  //     console.log('unseen 1');
+  //     const response = await GetApiWithToken(
+  //       endPoint.unseenMessageCount,
+  //       store?.getState()?.auth?.token,
+  //     );
+  //     console.log('unseen 2');
+  //     if (response?.data?.status) {
+  //       console.log('my unseen@@ message', response?.data);
+  //       dispatch(numberHandler({unSeenMessage: response?.data?.data + 1}));
+  //     }
+  //   } catch (err: any) {
+  //     console.log('err in unseen message api home screen', err?.message);
+  //   }
+  // };
+
+  const checkInternet = async () => {
+    const state = await NetInfo.fetch();
+    // if (state.isConnected && state.isInternetReachable) {
+    if (state.isInternetReachable) {
+      setIsInternetReachable(state.isInternetReachable);
+    } else {
+      Alert.alert('No internet connection.');
     }
   };
 
@@ -145,15 +195,49 @@ function App(): React.ReactElement {
             <Toast config={toastConfig} />
           </Provider>
         </NavigationContainer>
-        {showNoInternet && (
+        <Modal
+          visible={showNoInternet}
+          transparent={true}
+          animationType="slide">
+          <View style={styles.container}>
+            <Text style={styles.text}>No Internet Connection.</Text>
+            <BorderBtn
+              buttonText="Retry"
+              onClick={checkInternet}
+              containerStyle={{
+                marginTop: responsiveHeight(2),
+                width: responsiveWidth(50),
+              }}
+            />
+          </View>
+        </Modal>
+        {/* {showNoInternet && (
           <NoInternet
             setIsInternetReachable={setIsInternetReachable}
             setShowNoInternet={setShowNoInternet}
           />
-        )}
+        )} */}
       </StripeProvider>
     </GestureHandlerRootView>
   );
 }
 
 export default App;
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,.8)',
+  },
+  text: {
+    fontSize: responsiveFontSize(3),
+    textAlign: 'center',
+    color: globalStyles.themeBlueText,
+  },
+});

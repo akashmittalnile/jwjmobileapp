@@ -296,7 +296,7 @@ const AddNewJournals = () => {
             });
           });
         }
-        // console.log(formData);
+        console.log(formData,baseURL);
         let response: any = await fetch(
           baseURL +
             `${
@@ -310,7 +310,9 @@ const AddNewJournals = () => {
             body: formData,
           },
         );
+        console.log('response 1', response)
         response = await response.json();
+        console.log('response 2', response)
         if (response?.status) {
           dispatch(
             reloadHandler({

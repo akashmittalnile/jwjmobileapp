@@ -13,6 +13,7 @@ import {
   Image,
 } from 'react-native';
 import React from 'react';
+import uuid from 'react-native-uuid';
 import Header from '../../components/Header/Header';
 import {globalStyles} from '../../utils/constant';
 import {
@@ -23,6 +24,7 @@ import {
 import NotificationTab from '../../components/Tab/NotificationTab';
 import Subscription from '../../components/Subscription/Subscription';
 import {
+  DeleteApi,
   GetApiWithToken,
   PostApiWithToken,
   endPoint,
@@ -117,7 +119,6 @@ const Notification = () => {
         {},
         token,
       );
-      console.log(response?.data);
       if (response?.data?.status) {
         dispatch(notificationCounter({notificationCount: 0}));
       }
@@ -138,7 +139,12 @@ const Notification = () => {
   };
 
   const noDataFound = (
-    <View style={{marginTop: responsiveHeight(17),marginVertical: responsiveHeight(2), width: '100%'}}>
+    <View
+      style={{
+        marginTop: responsiveHeight(17),
+        marginVertical: responsiveHeight(2),
+        width: '100%',
+      }}>
       <Image
         source={require('../../assets/Icons/no-data-found.png')}
         resizeMode="contain"
@@ -335,8 +341,20 @@ const Notification = () => {
   // : `$${item?.price}/${
   //     planDetails?.plan_timeperiod === 'Monthly' ? 'Month' : 'Year'
   //   } `
+
+  const onSwipeHandler = async (id: string) => {
+    try {
+      const temp = notification?.filter(item => item?.id !== id);
+      setNotification(temp);
+      await DeleteApi(`${endPoint?.deleteNotification}?id=${id}`, token);
+    } catch (err: any) {
+      console.log('err in deleting particular notification', err?.message);
+    }
+  };
+
   const renderData = ({item}: {item: any}) => (
     <NotificationTab
+      id={item?.id}
       name={item?.sender_name}
       // imageUri={item?.sender_image}
       imageUri={item?.image}
@@ -346,6 +364,7 @@ const Notification = () => {
       )}
       style={styles.notificationTab}
       type="community"
+      onSwipe={onSwipeHandler}
     />
   );
 
@@ -418,14 +437,26 @@ const Notification = () => {
                   {Array.isArray(notification) && notification?.length > 0 && (
                     <View
                       style={{
-                        alignItems: 'flex-end',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                         marginTop: responsiveHeight(1),
+                        paddingHorizontal: responsiveWidth(2.5),
                         height: responsiveHeight(3),
                       }}>
+                      <Text
+                        style={{
+                          color: 'black',
+                          fontSize: responsiveFontSize(1.9),
+                          fontWeight: '400',
+                        }}>
+                        Notifications
+                      </Text>
                       <BorderLessBtn
                         buttonText="Clear All"
                         onClick={clearNoticationHandler}
                         buttonTextStyle={{fontSize: responsiveFontSize(2)}}
+                        containerStyle={{height: 'auto', width: 'auto'}}
                       />
                     </View>
                   )}
@@ -493,10 +524,12 @@ const styles = StyleSheet.create({
     // marginTop: responsiveHeight(2),
     paddingBottom: responsiveHeight(5),
     // height: responsiveHeight(85),
-    width: responsiveWidth(95),
+    width: responsiveWidth(100),
   },
   notificationTab: {
-    marginVertical: responsiveHeight(0.5),
+    alignSelf: 'center',
+    marginTop: responsiveHeight(1.2),
+    width: responsiveWidth(95),
   },
   subscriptionContainer: {
     flex: 1,

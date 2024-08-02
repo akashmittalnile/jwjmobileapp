@@ -76,8 +76,10 @@ const Welcome = () => {
               width: responsiveWidth(85),
               textAlign: 'center',
             }}>
-            Reference site about Lorem Ipsum, giving information on its origins,
-            as well as a random Lipsum generator.
+            Thank You for choosing Journey with Journals! We hope you will enjoy
+            documenting your personal experiences through life. You will find
+            joy in reading them in the years to come. Leaving a legacy for your
+            children and grandchildren.
           </Text>
           <BorderBtn
             buttonText="Sign In"
@@ -136,7 +138,11 @@ const Welcome = () => {
               & Confirm You Have Read Our
             </Text>
             <BorderLessBtn
-              onClick={() => {}}
+              onClick={() => {
+                navigation.navigate(ScreenNames.TermAndCondition, {
+                  privacy: true,
+                });
+              }}
               buttonText=" Privacy"
               buttonTextStyle={{
                 color: 'black',
@@ -147,7 +153,11 @@ const Welcome = () => {
             />
           </View>
           <BorderLessBtn
-            onClick={() => {}}
+            onClick={() => {
+              navigation.navigate(ScreenNames.TermAndCondition, {
+                privacy: true,
+              });
+            }}
             buttonText="  Policy"
             buttonTextStyle={{
               color: 'black',

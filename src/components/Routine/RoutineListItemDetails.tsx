@@ -176,32 +176,38 @@ const RoutineListItemDetails: React.FC<RoutineListItemDetailsProps> = ({
                 height: responsiveHeight(5),
                 width: responsiveHeight(5),
               }}>
-              <View style={styles.tabMemberContainer}>
-                <FastImage
-                  source={{
-                    uri: shareMemberList[0]?.share_to_user_profile || userIcon,
-                    priority: FastImage.priority.high,
-                  }}
-                  style={[
-                    styles.memberImg,
-                    {left: responsiveWidth(1), zIndex: 1000},
-                  ]}
-                  resizeMode={FastImage.resizeMode.contain}
-                />
-              </View>
-              <View style={styles.tabMemberContainer}>
-                <FastImage
-                  source={{
-                    uri: shareMemberList[1]?.share_to_user_profile || userIcon,
-                    priority: FastImage.priority.high,
-                  }}
-                  style={[
-                    styles.memberImg,
-                    {left: responsiveWidth(3.3), zIndex: 2000},
-                  ]}
-                  resizeMode={FastImage.resizeMode.contain}
-                />
-              </View>
+              {totalShare > 0 && (
+                <View style={styles.tabMemberContainer}>
+                  <FastImage
+                    source={{
+                      uri:
+                        shareMemberList[0]?.share_to_user_profile || userIcon,
+                      priority: FastImage.priority.high,
+                    }}
+                    style={[
+                      styles.memberImg,
+                      {left: responsiveWidth(1), zIndex: 1000},
+                    ]}
+                    resizeMode={FastImage.resizeMode.cover}
+                  />
+                </View>
+              )}
+              {totalShare > 1 && (
+                <View style={styles.tabMemberContainer}>
+                  <FastImage
+                    source={{
+                      uri:
+                        shareMemberList[1]?.share_to_user_profile || userIcon,
+                      priority: FastImage.priority.high,
+                    }}
+                    style={[
+                      styles.memberImg,
+                      {left: responsiveWidth(3.3), zIndex: 2000},
+                    ]}
+                    resizeMode={FastImage.resizeMode.cover}
+                  />
+                </View>
+              )}
             </View>
             <Text
               style={{

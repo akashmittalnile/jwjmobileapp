@@ -331,14 +331,14 @@ const Journals = () => {
             />
           )}
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.downloadJournal}
           onPress={downloadJournalHandler}>
           <Image
             source={require('../../assets/Icons/download-white.png')}
             style={styles.downloadJournalIcon}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       {showModal && (
         <View

@@ -6,6 +6,7 @@ import {
   ViewStyle,
   TouchableOpacity,
   Modal,
+  Image,
 } from 'react-native';
 import React, {useEffect} from 'react';
 import {Calendar} from 'react-native-calendars';
@@ -23,6 +24,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useNavigation} from '@react-navigation/native';
 import ScreenNames from '../../utils/ScreenNames';
 import {moodColorHandler} from '../../utils/Method';
+import TodayMood from '../Modal/TodayMood';
 
 interface MoodCalendarProps {
   containerStyle?: ViewStyle;
@@ -41,6 +43,7 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
   const token = useAppSelector(state => state.auth.token);
   const [date, setDate] = React.useState<string>(moment().format('YYYY-MM-DD'));
   const [data, setData] = React.useState<any>({});
+  const [moodData, setMoodData] = React.useState<any[]>([]);
   const [disableArrowRight, setDisableArrowRight] =
     React.useState<boolean>(false);
   const reload = useAppSelector(state => state.reload.MoodCalendar);
@@ -51,6 +54,7 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
     moment().format('YYYY-MM-DD').split('-')[0],
   );
   const [showModal, setShowModal] = React.useState<boolean>(false);
+  const [showMoodModal, setShowMoodModal] = React.useState<boolean>(false);
 
   useEffect(() => {
     value && setDate(value);
@@ -69,6 +73,7 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
         token,
       );
       if (response?.data?.status) {
+        setMoodData(response?.data?.data);
         response?.data?.data?.forEach(
           (item: any) =>
             (tempObj[
@@ -122,8 +127,11 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
       _dateHandler(a, b);
     }
   };
-
+  // console.log(data)
   const DateComponent = ({_data}: {_data: any}) => {
+    // console.log('shoaib', _data?.date?.day, moodData[_data?.date?.day - 1]?.journal_available)
+    const isJournalAvailable =
+      moodData[_data?.date?.day - 1]?.journal_available;
     const disable =
       _data?.date.month > currentMonth ||
       _data?.date.month < currentMonth ||
@@ -200,6 +208,8 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
                     styles.text,
                     {
                       color: 'black',
+                      fontWeight: isJournalAvailable ? '800' : '400',
+                      fontSize: isJournalAvailable ? responsiveFontSize(1.8) : responsiveFontSize(1.6)
                     },
                   ]}>
                   {_data?.date?.day}
@@ -237,22 +247,47 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
 
   return (
     <>
-      <Calendar
-        date={date ? date : value}
-        maxDate={`${new Date().toUTCString()}`}
-        dayComponent={data => <DateComponent _data={data} />}
-        renderHeader={(date: any) => <CalendarCustomHeader date={date} />}
-        disableArrowRight={disableArrowRight}
-        style={[styles.calendar, containerStyle]}
-        onMonthChange={monthHandler}
-      />
-      {/* <Modal animationType="slide" transparent={true} visible={showModal}>
+      <View style={styles.calendarContainer}>
+        <Calendar
+          date={date ? date : value}
+          maxDate={`${new Date().toUTCString()}`}
+          dayComponent={data => <DateComponent _data={data} />}
+          renderHeader={(date: any) => <CalendarCustomHeader date={date} />}
+          disableArrowRight={disableArrowRight}
+          style={[styles.calendar, containerStyle]}
+          onMonthChange={monthHandler}
+        />
+        {/* <Modal animationType="slide" transparent={true} visible={showModal}>
         <TouchableOpacity
           onPress={() => {
             setShowModal(false);
           }}
           style={styles.modalContainer}></TouchableOpacity>
       </Modal> */}
+        <TouchableOpacity
+          style={styles.touch}
+          onPress={() => {
+            setShowMoodModal(true);
+          }}>
+          <Image
+            source={require('../../assets/Icons/eye.png')}
+            style={{height: '100%', width: '100%'}}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      </View>
+      <Modal animationType="slide" transparent={true} visible={showMoodModal}>
+        <View style={styles.modalContainer}>
+          <TodayMood
+            heading="Depicted Colors"
+            disableButton={true}
+            onPress={() => {}}
+            disableModal={() => {
+              setShowMoodModal(false);
+            }}
+          />
+        </View>
+      </Modal>
     </>
   );
 };
@@ -260,6 +295,13 @@ const MoodCalendar: React.FC<MoodCalendarProps> = ({
 export default MoodCalendar;
 
 const styles = StyleSheet.create({
+  calendarContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    paddingBottom: responsiveHeight(1),
+    width: '100%',
+  },
   calendar: {
     width: responsiveWidth(67),
   },
@@ -296,5 +338,12 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  touch: {
+    position: 'absolute',
+    height: responsiveHeight(3),
+    width: responsiveHeight(5),
+    top: responsiveHeight(-2),
+    right: responsiveWidth(3),
   },
 });

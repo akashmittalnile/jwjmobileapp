@@ -34,19 +34,21 @@ const DownloadedPdf = () => {
       setSkeleton(false);
     }
   };
-
-  const renderPdfCard = ({item}: {item: any}) => (
-    <PdfCard
-      pdfLink={item?.download_url}
-      startDate={item?.start_date}
-      paymentDate={item?.payment_date}
-    />
-  );
+  const renderPdfCard = ({item}: {item: any}) => {
+    console.log(item?.download_url);
+    return (
+      <PdfCard
+        pdfLink={item?.download_url}
+        startDate={item?.start_date}
+        paymentDate={item?.payment_date}
+      />
+    );
+  };
 
   return (
     <View style={styles.mainContainer}>
       <View style={styles.headerContainer}>
-        <Header title="Purchased Journals" notificationButton={false} />
+        <Header title="Printed Pdf" notificationButton={false} />
       </View>
       <View style={styles.subContainer}>
         {skeleton && <SkeletonContainer />}
